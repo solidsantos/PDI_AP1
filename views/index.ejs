@@ -6,6 +6,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script defer src="home.js"></script>
     <title>PDI</title>
 </head>
 <body>
@@ -13,10 +14,13 @@
         <div id="sidebar">
             <h2>PDI image editor</h2>
             <div id="buttons">
-                <button>
-                    <span>adicionar imagem</span>
-                </button>
-                <div>
+                <div class="sub-div">
+                    <label for="upload">
+                        Subir imagem:
+                    </label>
+                    <input type="file" name="upload" id="btn-upload" accept="image/*">
+                </div>
+                <div class="sub-div">
                     <label for="brightness">
                         Brilho:
                     </label>
