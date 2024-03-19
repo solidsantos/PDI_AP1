@@ -30,10 +30,6 @@ uploadBtn.addEventListener('change', async()=>{
 })
 
 
-
-
-
-
 /// Brilho da Imagem
 
 const brightnessRange = document.getElementById('brightness-range');
@@ -58,9 +54,16 @@ brightnessBtn.addEventListener('click', async()=>{
         }
     };
     try{
-        const res = await fetch('http://localhost:8080/brightness', fetchOptions);
-        mainImage.setAttribute('src', `/uploads/${imageName}`);
+        const res = await fetch('http://localhost:8080/brightness', fetchOptions).then(
+            console.log('recarregar imagem')
+        )
     }catch(err){
         console.log(err);
     }
 })
+
+
+
+
+//// other
+
