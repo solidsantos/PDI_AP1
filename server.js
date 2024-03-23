@@ -15,6 +15,7 @@ app.get('/', (req, res)=>{
 })
 app.post('/upImage', imgC.new);
 app.post('/brightness', imgC.brightness);
+app.post('/invert', imgC.invert);
 
 
 app.listen(8080);

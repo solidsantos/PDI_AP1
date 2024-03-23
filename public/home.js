@@ -1,7 +1,8 @@
 var imageName
 const uploadBtn = document.getElementById('btn-upload');
 
-const mainImage = document.getElementById('image-aplication');
+
+const imageContainer = document.getElementById('image-container');
 const subdivs = document.getElementsByClassName('sub-div');
 
 uploadBtn.addEventListener('change', async()=>{
@@ -20,15 +21,26 @@ uploadBtn.addEventListener('change', async()=>{
     try{
         const res = await fetch('http://localhost:8080/upImage', fetchOptions);
         const content = await res.json();
-        mainImage.setAttribute('src', `/uploads/${content.link}`)
         imageName = content.link;
-        console.log(imageName);
+        alterateImage(imageName);
     }catch(err){
         console.log(err);
     }
 
 })
 
+function alterateImage(imgTitle){
+    console.log(imageContainer.children.length);
+    if(imageContainer.children.length > 0) imageContainer.removeChild(imageContainer.children[0]);
+    const imageField = document.createElement('img');
+    imageField.setAttribute('id', 'image-aplication');
+    imageField.setAttribute('src', `/uploads/Loading_icon.gif`);
+    imageContainer.appendChild(imageField);
+    setTimeout(()=>{
+        imageField.setAttribute('src', `/uploads/${imgTitle}`);
+        imageContainer.appendChild(imageField);
+    }, 1000);
+}
 
 /// Brilho da Imagem
 
@@ -54,15 +66,33 @@ brightnessBtn.addEventListener('click', async()=>{
         }
     };
     try{
-        const res = await fetch('http://localhost:8080/brightness', fetchOptions).then(
-            console.log('recarregar imagem')
-        )
+        const res = await fetch('http://localhost:8080/brightness', fetchOptions);
+        if(res.status == 200) alterateImage(imageName);
     }catch(err){
         console.log(err);
     }
 })
 
-
+/// Inverter cores
+const invertBtn = document.getElementById('invert-btn');
+invertBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json' // Define o tipo de conteúdo como JSON
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/invert', fetchOptions);
+        if(res.status == 200) alterateImage(imageName);
+    }catch(err){
+        console.log(err);
+    }
+})
 
 
 //// other

@@ -22,6 +22,17 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+    async invert(req, res){
+        const image = req.body;
+        console.log(image);
+        try{
+            const result = await images.invert(image.title);
+            return res.status(200).json({msg: 'sucesso!'});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
 }
 
 

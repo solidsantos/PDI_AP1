@@ -5,7 +5,6 @@ class images{
     async brighten(imagePath, coef){
         try{
             let nCoef = parseFloat(coef)
-            console.log(nCoef);
             const image = await Jimp.read(path.resolve('uploads', imagePath));
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, (x, y, idx) => {
                 if(image.bitmap.data[idx]*nCoef > 255) image.bitmap.data[idx] = 255
@@ -19,8 +18,23 @@ class images{
             });
             await image.writeAsync(path.resolve('uploads', imagePath));
             return true;
-        } catch (err) {
+        }catch(err){
             console.error(err);
+            return false;
+        }
+    }
+    async invert(imagePath){
+        try{
+            const image = await Jimp.read(path.resolve('uploads', imagePath));
+            image.scan(0, 0, image.bitmap.width, image.bitmap.height, (x, y, idx) => {
+                image.bitmap.data[idx] = Math.abs(image.bitmap.data[idx] - 255);
+                image.bitmap.data[idx + 1] = Math.abs(image.bitmap.data[idx + 1] - 255);
+                image.bitmap.data[idx + 2] = Math.abs(image.bitmap.data[idx + 2] - 255);
+            })
+            await image.writeAsync(path.resolve('uploads', imagePath));
+            return true;
+        }catch(err){
+            console.log(err);
             return false;
         }
     }
