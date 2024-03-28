@@ -62,7 +62,7 @@ brightnessBtn.addEventListener('click', async()=>{
         method: 'POST',
         body: body,
         headers: {
-            'Content-Type': 'application/json' // Define o tipo de conteúdo como JSON
+            'Content-Type': 'application/json'
         }
     };
     try{
@@ -83,16 +83,39 @@ invertBtn.addEventListener('click', async()=>{
         method: 'POST',
         body: body,
         headers: {
-            'Content-Type': 'application/json' // Define o tipo de conteúdo como JSON
+            'Content-Type': 'application/json'
         }
     };
     try{
         const res = await fetch('http://localhost:8080/invert', fetchOptions);
+        if(res.status == 200) alterateImage('output.jpg');
+    }catch(err){
+        console.log(err);
+    }
+})
+
+
+/// Sobel
+const sobelBtn = document.getElementById('sobel-btn');
+sobelBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/sobel', fetchOptions);
         if(res.status == 200) alterateImage(imageName);
     }catch(err){
         console.log(err);
     }
 })
+
 
 
 //// other
