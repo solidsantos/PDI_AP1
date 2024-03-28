@@ -73,6 +73,61 @@ brightnessBtn.addEventListener('click', async()=>{
     }
 })
 
+
+/// Filtros
+
+const filterRange = document.getElementById('filter-range');
+const smoothingBtn = document.getElementById('smoothing-btn');
+const gaussBtn = document.getElementById('gauss-btn');
+var filterCoef = 0;
+
+filterRange.addEventListener('change', ()=>{
+    const val = document.getElementById('filter-value');
+    filterCoef = 2*parseInt(filterRange.value) - 1;
+    val.innerText = filterCoef;
+})
+smoothingBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName,
+        coef: parseInt(filterCoef)
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/meanSmoothing', fetchOptions);
+        if(res.status == 200) alterateImage(imageName);
+    }catch(err){
+        console.log(err);
+    }
+})
+
+gaussBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName,
+        coef: parseInt(filterCoef)
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/gauss', fetchOptions);
+        if(res.status == 200) alterateImage(imageName);
+    }catch(err){
+        console.log(err);
+    }
+})
+
+
+
 /// Inverter cores
 const invertBtn = document.getElementById('invert-btn');
 invertBtn.addEventListener('click', async()=>{
@@ -110,7 +165,7 @@ sobelBtn.addEventListener('click', async()=>{
     };
     try{
         const res = await fetch('http://localhost:8080/sobel', fetchOptions);
-        if(res.status == 200) alterateImage(imageName);
+        if(res.status == 200) alterateImage('output.jpg');
     }catch(err){
         console.log(err);
     }

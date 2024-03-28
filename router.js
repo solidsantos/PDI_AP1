@@ -8,6 +8,7 @@ router.get('/', (req, res)=>{ return res.render('index.ejs'); })
 
 router.post('/upImage', imgC.new);
 router.post('/brightness', imgC.brightness);
+router.post('/meanSmoothing', imgC.meanSmoothing);
 router.post('/invert', imgC.invert);
 router.post('/sobel', imgC.sobel);
 

@@ -85,5 +85,88 @@ class images{
             console.error('Error:', error);
         }
     }
+    async meanSmoothing(imagePath, coef){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let imageResult = [];
+            function getMean(pixels){
+                const totalPixels = pixels.length;
+                let sumR = 0, sumG = 0, sumB = 0;
+                for(const pixel of pixels){
+                    sumR += pixel.r;
+                    sumG += pixel.g;
+                    sumB += pixel.b;
+                }
+                const meanR = Math.floor(sumR / totalPixels);
+                const meanG = Math.floor(sumG / totalPixels);
+                const meanB = Math.floor(sumB / totalPixels);
+                return {r: meanR, g: meanG, b: meanB};
+            }
+            function getNeighbors(i, j){
+                const neighbor = [];
+                for (let k = Math.max(0, i - coef); k <= Math.min(height - 1, i + coef); k++) {
+                    for (let l = Math.max(0, j - coef); l <= Math.min(width - 1, j + coef); l++) {
+                        neighbor.push(imageBox[k][l]);
+                    }
+                }
+                return neighbor;
+            }
+            for(let i=0; i<height; i++){
+                const line = [];
+                for(let j=0; j<width; j++) {
+                    const neighbor = getNeighbors(i, j);
+                    const mean = getMean(neighbor);
+                    line.push(mean);
+                }
+                imageResult.push(line);
+            }
+            const res = await this.saveImageBox(imagePath, imageResult);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+    async createImageBox(imagePath){
+        try{
+            const image = await Jimp.read(path.resolve('uploads', imagePath));
+            let height = image.bitmap.height; let width = image.bitmap.width;
+            let imageBox = [];
+            image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx){
+                const pixel = {
+                    r: this.bitmap.data[idx],
+                    g: this.bitmap.data[idx + 1],
+                    b: this.bitmap.data[idx + 2]
+                };
+                if(!imageBox[y]){
+                    imageBox[y] = [];
+                }
+                imageBox[y][x] = pixel;
+            })
+            let result = {imageBox, height, width};
+            return result;
+        }catch(err){
+            console.log(err);
+            return null;
+        }
+
+
+    }
+    async saveImageBox(imagePath, imageBox){
+        try{
+            const image = await Jimp.read(path.resolve('uploads', imagePath));
+            image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx){
+                const pixel = imageBox[y][x];
+                this.bitmap.data[idx] = pixel.r;
+                this.bitmap.data[idx + 1] = pixel.g;
+                this.bitmap.data[idx + 2] = pixel.b;
+            })
+            await image.writeAsync('uploads/output.jpg');
+            return true;
+        }catch(err){
+            console.log(err)
+            return false;
+        }
+    }
 }
 module.exports = new images

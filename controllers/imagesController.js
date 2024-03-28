@@ -23,6 +23,17 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+    async meanSmoothing(req, res){
+        const image = req.body;
+        try{
+            const result = await images.meanSmoothing(image.title, image.coef);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: 'sucesso!'});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
     async invert(req, res){
         const image = req.body;
         try{
