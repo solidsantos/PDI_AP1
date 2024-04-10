@@ -126,6 +126,34 @@ gaussBtn.addEventListener('click', async()=>{
     }
 })
 
+/// Rotação
+const degreeInput = document.getElementById('rotation-input');
+const argX = document.getElementById('rotation-x');
+const argY = document.getElementById('rotation-y');
+const rotationBtn = document.getElementById('rotation-btn');
+
+rotationBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName,
+        ang: parseInt(degreeInput),
+        x: parseInt(argX),
+        y: parseInt(argY)
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/rotate', fetchOptions);
+        if(res.status == 200) alterateImage(imageName);
+    }catch(err){
+        console.log(err);
+    }
+})
+
 
 
 /// Inverter cores

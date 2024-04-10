@@ -34,6 +34,18 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+    async rotation(req, res){
+        const image = req.body;
+        const rp = []; rp.push(image.argX); rp.push(image.argY);
+        try{
+            const result = await images.rotate(image.title, image.ang, rp);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: 'sucesso!'});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
     async invert(req, res){
         const image = req.body;
         try{

@@ -11,5 +11,6 @@ router.post('/brightness', imgC.brightness);
 router.post('/meanSmoothing', imgC.meanSmoothing);
 router.post('/invert', imgC.invert);
 router.post('/sobel', imgC.sobel);
+router.post('/rotate', imgC.rotation);
 
 module.exports = router;
