@@ -38,6 +38,39 @@ class images{
             return false;
         }
     }
+    async gama(imagePath, coef){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let imageResult = [];
+            for(let i=0; i<height; i++){
+                let line = [];
+                for(let j=0; j<width; j++){
+                    let pixel = {r: 0, g: 0, b: 0};
+                    pixel.r = Math.pow(imageBox[i][j].r / 255, coef);
+                    pixel.g = Math.pow(imageBox[i][j].g / 255, coef);
+                    pixel.b = Math.pow(imageBox[i][j].b / 255, coef);
+                    
+                    pixel.r *= 255;
+                    pixel.b *= 255;
+                    pixel.g *= 255;
+                    
+                    pixel.r = parseInt(pixel.r);
+                    pixel.b = parseInt(pixel.b);
+                    pixel.g = parseInt(pixel.g);
+                    
+                    line.push(pixel);
+                }
+                imageResult.push(line);
+                
+            }
+            const res = await this.saveImageBox(imagePath, imageResult);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+
     async sobel(imagePath) {
         try{
             const image = await Jimp.read(path.resolve('uploads', imagePath));
