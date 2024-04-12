@@ -38,6 +38,28 @@ class images{
             return false;
         }
     }
+    async log(imagePath, coef){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let imageResult = [];
+            for(let i=0; i<height; i++){
+                let line = [];
+                for(let j=0; j<width; j++){
+                    let pixel = {r: 0, g: 0, b:0}
+                    pixel.r = coef * Math.log(imageBox[i][j].r + 1);
+                    pixel.g = coef * Math.log(imageBox[i][j].g + 1);
+                    pixel.b = coef * Math.log(imageBox[i][j].b + 1);
+                    line.push(pixel);
+                }
+                imageResult.push(line);
+            }
+            const res = await this.saveImageBox(imagePath, imageResult);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
     async gama(imagePath, coef){
         try{
             let {imageBox, height, width} = await this.createImageBox(imagePath);
@@ -70,7 +92,32 @@ class images{
             return false;
         }
     }
+    async binary(imagePath, coef){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let imageResult = [];
+            for(let i = 0; i<height; i++){
+                let line = [];     
+                for(let j = 0; j<width; j++){
+                    let pixel = {r: 0, g: 0, b: 0};
+                    if(imageBox[i][j].r > coef) pixel.r = 255;
+                    else pixel.r = 0;
+                    if(imageBox[i][j].g > coef) pixel.g = 255;
+                    else pixel.g = 0;
+                    if(imageBox[i][j].b > coef) pixel.b = 255;
+                    else pixel.b = 0;
+                    line.push(pixel);
+                }
+                imageResult.push(line);
+            }
+            const res = await this.saveImageBox(imagePath, imageResult);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
 
+    }
     async sobel(imagePath) {
         try{
             const image = await Jimp.read(path.resolve('uploads', imagePath));

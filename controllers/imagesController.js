@@ -23,10 +23,32 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+    async log(req, res){
+        const image = req.body;
+        try{
+            const result = await images.log(image.title, image.coef);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: 'sucesso!'});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
     async gama(req, res){
         const image = req.body;
         try{
             const result = await images.gama(image.title, image.coef);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: 'sucesso!'});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async binary(req, res){
+        const image = req.body;
+        try{
+            const result = await images.binary(image.title, image.coef);
             res.setHeader('Cache-Control', 'no-cache');
             return res.status(200).json({msg: 'sucesso!'});
         }catch(err){

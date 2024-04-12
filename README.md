@@ -14,8 +14,8 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 [Parte 1]:
 
 - Negativo ✅
-- Transformações logarítmicas
-- Potência (correção de gama) linear definidas por partes
+- Transformações logarítmicas ✅
+- Potência (correção de gama) ✅ linear definidas por partes
 - Esteganografia
 
 [Parte 2]:
@@ -25,7 +25,7 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 
 [Parte 3]:
 
-- Limiarização (Binarização)
+- Limiarização (Binarização) ✅
 - Aplicação de filtro genérico por convolução
 - Filtro de suavização da média ✅
 - Filtro gaussiano
