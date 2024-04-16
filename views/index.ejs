@@ -36,10 +36,40 @@
                     <label for="range" id="filter-value">0</label>
                     <button id="smoothing-btn">Suavizar</button>
                     <button id="gauss-btn">Gaussiana</button>
+                </div>
+                <div class="sub-div">
+                    <label for="gama">
+                        Gama:
+                    </label>
+                    <input type="range" name="gama" id="gama-range" max="100" min="-100">
+                    <label for="range" id="gama-value">0</label>
+                    <button id="gama-btn">></button>
+                </div>
+                <div class="sub-div">
+                    <label for="binary">
+                        Linearização:
+                    </label>
+                    <input type="range" name="binary" id="binary-range" max="255" min="0">
+                    <label for="range" id="binary-value">0</label>
+                    <button id="binary-btn">></button>
+                </div>
+                <div class="sub-div">
+                    <label for="log">log - <strong>c</strong>log (1+r):</label>
+                    <input type="number" name="log" id="log-input">
+                    <button id="log-btn">></button>
 
                 </div>
                 <button id="invert-btn">Inverter imagem</button>
                 <button id="sobel-btn">Aplicar Sobel</button>
+                <div class="sub-div">
+                    <label for="rotation">
+                        Rotação:
+                    </label>
+                    <input type="number" name="rotation-input" id="rotation-input">
+                    <input type="number" name="rotation-x" id="rotation-x" placeholder="x">
+                    <input type="number" name="rotation-y" id="rotation-y" placeholder="y">
+                    <button id="rotation-btn">Rodar imagem</button>
+                </div>
             </div>
         </div>
         <div id="image-container">

@@ -73,6 +73,97 @@ brightnessBtn.addEventListener('click', async()=>{
     }
 })
 
+/// Transformação logaritma:
+
+const logInput = document.getElementById('log-input');
+const logBtn = document.getElementById('log-btn');
+var logCoef = 0;
+
+logInput.addEventListener('change', ()=>{
+    logCoef = parseFloat(logInput.value);
+})
+logBtn.addEventListener('click', async ()=>{
+    const body = JSON.stringify({
+        title: imageName,
+        coef: logCoef
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/log', fetchOptions);
+        if(res.status == 200) alterateImage(imageName);
+    }catch(err){
+        console.log(err);
+    }
+})
+
+/// Gama
+
+const gamaRange = document.getElementById('gama-range');
+const gamaBtn = document.getElementById('gama-btn');
+var gamaCoef = 0;
+
+gamaRange.addEventListener('change', ()=>{
+    const val = document.getElementById('gama-value');
+    gamaCoef = gamaRange.value;
+    val.innerText = gamaCoef;
+})
+gamaBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName,
+        coef: (parseInt(gamaCoef)/10)
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/gama', fetchOptions);
+        if(res.status == 200) alterateImage(imageName);
+    }catch(err){
+        console.log(err);
+    }
+})
+
+/// Linearização (binarização)
+
+const binaryRange = document.getElementById('binary-range');
+const binaryBtn = document.getElementById('binary-btn');
+var binaryCoef = 0;
+
+binaryRange.addEventListener('change', ()=>{
+    const val = document.getElementById('binary-value');
+    binaryCoef = binaryRange.value;
+    val.innerText = binaryCoef;
+})
+binaryBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName,
+        coef: (parseInt(binaryCoef))
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/binary', fetchOptions);
+        if(res.status == 200) alterateImage(imageName);
+    }catch(err){
+        console.log(err);
+    }
+})
+
 
 /// Filtros
 
@@ -120,6 +211,34 @@ gaussBtn.addEventListener('click', async()=>{
     };
     try{
         const res = await fetch('http://localhost:8080/gauss', fetchOptions);
+        if(res.status == 200) alterateImage(imageName);
+    }catch(err){
+        console.log(err);
+    }
+})
+
+/// Rotação
+const degreeInput = document.getElementById('rotation-input');
+const argX = document.getElementById('rotation-x');
+const argY = document.getElementById('rotation-y');
+const rotationBtn = document.getElementById('rotation-btn');
+
+rotationBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName,
+        ang: parseInt(degreeInput),
+        x: parseInt(argX),
+        y: parseInt(argY)
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/rotate', fetchOptions);
         if(res.status == 200) alterateImage(imageName);
     }catch(err){
         console.log(err);

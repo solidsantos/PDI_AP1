@@ -38,6 +38,86 @@ class images{
             return false;
         }
     }
+    async log(imagePath, coef){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let imageResult = [];
+            for(let i=0; i<height; i++){
+                let line = [];
+                for(let j=0; j<width; j++){
+                    let pixel = {r: 0, g: 0, b:0}
+                    pixel.r = coef * Math.log(imageBox[i][j].r + 1);
+                    pixel.g = coef * Math.log(imageBox[i][j].g + 1);
+                    pixel.b = coef * Math.log(imageBox[i][j].b + 1);
+                    line.push(pixel);
+                }
+                imageResult.push(line);
+            }
+            const res = await this.saveImageBox(imagePath, imageResult);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+    async gama(imagePath, coef){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let imageResult = [];
+            for(let i=0; i<height; i++){
+                let line = [];
+                for(let j=0; j<width; j++){
+                    let pixel = {r: 0, g: 0, b: 0};
+                    pixel.r = Math.pow(imageBox[i][j].r / 255, coef);
+                    pixel.g = Math.pow(imageBox[i][j].g / 255, coef);
+                    pixel.b = Math.pow(imageBox[i][j].b / 255, coef);
+                    
+                    pixel.r *= 255;
+                    pixel.b *= 255;
+                    pixel.g *= 255;
+                    
+                    pixel.r = parseInt(pixel.r);
+                    pixel.b = parseInt(pixel.b);
+                    pixel.g = parseInt(pixel.g);
+                    
+                    line.push(pixel);
+                }
+                imageResult.push(line);
+                
+            }
+            const res = await this.saveImageBox(imagePath, imageResult);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+    async binary(imagePath, coef){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let imageResult = [];
+            for(let i = 0; i<height; i++){
+                let line = [];     
+                for(let j = 0; j<width; j++){
+                    let pixel = {r: 0, g: 0, b: 0};
+                    if(imageBox[i][j].r > coef) pixel.r = 255;
+                    else pixel.r = 0;
+                    if(imageBox[i][j].g > coef) pixel.g = 255;
+                    else pixel.g = 0;
+                    if(imageBox[i][j].b > coef) pixel.b = 255;
+                    else pixel.b = 0;
+                    line.push(pixel);
+                }
+                imageResult.push(line);
+            }
+            const res = await this.saveImageBox(imagePath, imageResult);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+
+    }
     async sobel(imagePath) {
         try{
             const image = await Jimp.read(path.resolve('uploads', imagePath));
@@ -104,8 +184,8 @@ class images{
             }
             function getNeighbors(i, j){
                 const neighbor = [];
-                for (let k = Math.max(0, i - coef); k <= Math.min(height - 1, i + coef); k++) {
-                    for (let l = Math.max(0, j - coef); l <= Math.min(width - 1, j + coef); l++) {
+                for(let k = Math.max(0, i - coef); k <= Math.min(height - 1, i + coef); k++) {
+                    for(let l = Math.max(0, j - coef); l <= Math.min(width - 1, j + coef); l++) {
                         neighbor.push(imageBox[k][l]);
                     }
                 }
@@ -127,6 +207,99 @@ class images{
             return false;
         }
     }
+
+    async rotate(imagePath, ang, rp){
+        try{
+            let imageBox = await this.createImageBox(imagePath);
+            let imageRot = rotacao(imageBox, ang, rp);
+            let res = await this.saveImageBox('uploads/output.jpg', imageRot);
+            return res;
+
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+
+        function rotacao(im, ang, pv) {
+            const pi = Math.PI;
+            ang = ang * (pi / 180);
+        
+            const t = [
+                [1, 0, -pv[0]],
+                [0, 1, -pv[1]],
+                [0, 0, 1]
+            ];
+        
+            const r = [
+                [Math.cos(ang), -Math.sin(ang), 0],
+                [Math.sin(ang), Math.cos(ang), 0],
+                [0, 0, 1]
+            ];
+        
+            const tm = [
+                [1, 0, pv[0]],
+                [0, 1, pv[1]],
+                [0, 0, 1]
+            ];
+        
+            const tr = multiplyMatrices(multiplyMatrices(tm, r), t);
+        
+            const p1 = transforma(1, 1, tr);
+            const p2 = transforma(1, 256, tr);
+            const p3 = transforma(256, 256, tr);
+            const p4 = transforma(256, 1, tr);
+        
+            const minx = Math.min(p1[0], p2[0], p3[0], p4[0]);
+            const maxx = Math.max(p1[0], p2[0], p3[0], p4[0]);
+            const miny = Math.min(p1[1], p2[1], p3[1], p4[1]);
+            const maxy = Math.max(p1[1], p2[1], p3[1], p4[1]);
+        
+            const tmin = [
+                [1, 0, minx],
+                [0, 1, miny],
+                [0, 0, 1]
+            ];
+        
+            const tr2 = multiplyMatrices(multiplyMatrices(multiplyMatrices(tm, r), t), tmin);
+        
+            const linhas = Math.round(maxy - miny);
+            const colunas = Math.round(maxx - minx);
+            const img = new Array(linhas).fill(0).map(() => new Array(colunas).fill(0));
+        
+            for (let l = 0; l < img.length; l++) {
+                for (let c = 0; c < img[0].length; c++) {
+                    const pt = transforma(c + 1, l + 1, tr2);
+                    const lo = pt[0];
+                    const co = pt[1];
+                    if (lo >= 1 && lo <= im.length && co >= 1 && co <= im[0].length) {
+                        img[l][c] = im[Math.round(lo) - 1][Math.round(co) - 1];
+                    }
+                }
+            }
+        
+            return img;
+        }
+        function transforma(linha, coluna, m) {
+            const pc = [coluna, linha, 1];
+            const pt = multiplyMatrices([pc], m);
+            return [pt[0][0], pt[0][1]];
+        }
+        function multiplyMatrices(m1, m2) {
+            const result = [];
+            for (let i = 0; i < m1.length; i++) {
+                result[i] = [];
+                for (let j = 0; j < m2[0].length; j++) {
+                    let sum = 0;
+                    for (let k = 0; k < m1[0].length; k++) {
+                        sum += m1[i][k] * m2[k][j];
+                    }
+                    result[i][j] = sum;
+                }
+            }
+            return result;
+        }
+    }
+
     async createImageBox(imagePath){
         try{
             const image = await Jimp.read(path.resolve('uploads', imagePath));

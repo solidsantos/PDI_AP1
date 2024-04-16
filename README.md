@@ -16,3 +16,4 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 5. Sobel;
 6. Converter uma imagem do Jimp em uma matriz de pixels;
 7. Filtro de média para os k vizinhos mais próximos.
+
