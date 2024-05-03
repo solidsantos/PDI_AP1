@@ -17,7 +17,7 @@ class ImagesController{
         try{
             const result = await images.brighten(image.title, image.coef);
             res.setHeader('Cache-Control', 'no-cache');
-            return res.status(200).json({msg: 'sucesso!'});
+            return res.status(200).json({msg: result});
         }catch(err){
             console.log(err);
             return res.status(500).json({msg: 'erro interno do servidor!'});
@@ -28,7 +28,7 @@ class ImagesController{
         try{
             const result = await images.log(image.title, image.coef);
             res.setHeader('Cache-Control', 'no-cache');
-            return res.status(200).json({msg: 'sucesso!'});
+            return res.status(200).json({msg: result});
         }catch(err){
             console.log(err);
             return res.status(500).json({msg: 'erro interno do servidor!'});
@@ -39,7 +39,7 @@ class ImagesController{
         try{
             const result = await images.gama(image.title, image.coef);
             res.setHeader('Cache-Control', 'no-cache');
-            return res.status(200).json({msg: 'sucesso!'});
+            return res.status(200).json({msg: result});
         }catch(err){
             console.log(err);
             return res.status(500).json({msg: 'erro interno do servidor!'});
@@ -50,7 +50,7 @@ class ImagesController{
         try{
             const result = await images.binary(image.title, image.coef);
             res.setHeader('Cache-Control', 'no-cache');
-            return res.status(200).json({msg: 'sucesso!'});
+            return res.status(200).json({msg: result});
         }catch(err){
             console.log(err);
             return res.status(500).json({msg: 'erro interno do servidor!'});
@@ -61,7 +61,7 @@ class ImagesController{
         try{
             const result = await images.meanSmoothing(image.title, image.coef);
             res.setHeader('Cache-Control', 'no-cache');
-            return res.status(200).json({msg: 'sucesso!'});
+            return res.status(200).json({msg: result});
         }catch(err){
             console.log(err);
             return res.status(500).json({msg: 'erro interno do servidor!'});
@@ -73,7 +73,7 @@ class ImagesController{
         try{
             const result = await images.rotate(image.title, image.ang, rp);
             res.setHeader('Cache-Control', 'no-cache');
-            return res.status(200).json({msg: 'sucesso!'});
+            return res.status(200).json({msg: result});
         }catch(err){
             console.log(err);
             return res.status(500).json({msg: 'erro interno do servidor!'});
@@ -84,7 +84,18 @@ class ImagesController{
         try{
             const result = await images.invert(image.title);
             res.setHeader('Cache-Control', 'no-cache');
-            return res.status(200).json({msg: 'sucesso!'});
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async laplaciano(req, res){
+        const image = req.body;
+        try{
+            const result = await images.laplaciano(image.title);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
         }catch(err){
             console.log(err);
             return res.status(500).json({msg: 'erro interno do servidor!'});
@@ -94,7 +105,7 @@ class ImagesController{
         const image = req.body;
         try{
             const result = await images.sobel(image.title);
-            return res.status(200).json({msg: 'sucesso!'});
+            return res.status(200).json({msg: result});
         }catch(err){
             console.log(err);
             return res.status(500).json({msg: 'erro interno do servidor!'});

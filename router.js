@@ -15,5 +15,6 @@ router.post('/meanSmoothing', imgC.meanSmoothing);
 router.post('/invert', imgC.invert);
 router.post('/sobel', imgC.sobel);
 router.post('/rotate', imgC.rotation);
+router.post('/laplaciano', imgC.laplaciano);
 
 module.exports = router;

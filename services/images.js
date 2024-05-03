@@ -1,5 +1,6 @@
 const path = require('path')
 const Jimp = require('jimp');
+let sufix = 0
 
 class images{
     async brighten(imagePath, coef){
@@ -16,8 +17,9 @@ class images{
                 if(image.bitmap.data[idx + 2]*nCoef > 255) image.bitmap.data[idx + 2] = 255
                 else image.bitmap.data[idx + 2] *= nCoef;
             });
-            await image.writeAsync(path.resolve('uploads', imagePath));
-            return true;
+            sufix++;
+            await image.writeAsync(`uploads/output${sufix}.jpg`);
+            return `output${sufix}.jpg`;
         }catch(err){
             console.error(err);
             return false;
@@ -31,13 +33,65 @@ class images{
                 image.bitmap.data[idx + 1] = Math.abs(image.bitmap.data[idx + 1] - 255);
                 image.bitmap.data[idx + 2] = Math.abs(image.bitmap.data[idx + 2] - 255);
             })
-            await image.writeAsync('uploads/output.jpg');
-            return true;
+            sufix++;
+            await image.writeAsync(`uploads/output${sufix}.jpg`);
+            return `output${sufix}.jpg`;
         }catch(err){
             console.log(err);
             return false;
         }
     }
+    async laplaciano(imagePath){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let laplaceMask = JSON.parse(JSON.stringify(imageBox));
+            let min = {r: 256, g:256, b:256}
+            for(let i=1; i<height-1; i++){
+                for(let j=1; j<width-1; j++){
+                    laplaceMask[i][j].r = -4 * imageBox[i][j].r + imageBox[i-1][j].r + imageBox[i+1][j].r + imageBox[i][j-1].r + imageBox[i][j+1].r;
+                    laplaceMask[i][j].g = -4 * imageBox[i][j].g + imageBox[i-1][j].g + imageBox[i+1][j].g + imageBox[i][j-1].g + imageBox[i][j+1].g;
+                    laplaceMask[i][j].b = -4 * imageBox[i][j].b + imageBox[i-1][j].b + imageBox[i+1][j].b + imageBox[i][j-1].b + imageBox[i][j+1].b;
+
+                    laplaceMask[i][j].r = Math.max(0, Math.min(laplaceMask[i][j].r, 255));
+                    laplaceMask[i][j].g = Math.max(0, Math.min(laplaceMask[i][j].g, 255));
+                    laplaceMask[i][j].b = Math.max(0, Math.min(laplaceMask[i][j].b, 255));
+
+                    /*if(laplaceMask[i][j].r < min.r) min.r = laplaceMask[i][j].r;
+                    if(laplaceMask[i][j].g < min.g) min.g = laplaceMask[i][j].g;
+                    if(laplaceMask[i][j].b < min.b) min.b = laplaceMask[i][j].b; */
+                }
+            }
+            /*
+            for(let i=1; i<height-1; i++){
+                for(let j=1; j<width-1; j++){
+                    laplaceMask[i][j].r = laplaceMask[i][j].r + (-1)*min.r;
+                    if(laplaceMask[i][j].r > 255) laplaceMask[i][j].r = 255;
+                    laplaceMask[i][j].g = laplaceMask[i][j].g + (-1)*min.g;
+                    if(laplaceMask[i][j].g > 255) laplaceMask[i][j].g = 255;
+                    laplaceMask[i][j].b = laplaceMask[i][j].b + (-1)*min.b;
+                    if(laplaceMask[i][j].b > 255) laplaceMask[i][j].b = 255;
+                }
+            }*/
+            for(let i = 1; i<height-1; i++){
+                for(let j=0; j<width-1; j++){
+                    imageBox[i][j].r -= laplaceMask[i][j].r;
+                    imageBox[i][j].r = Math.max(0, Math.min(imageBox[i][j].r, 255));
+
+                    imageBox[i][j].g -= laplaceMask[i][j].g;
+                    imageBox[i][j].g = Math.max(0, Math.min(imageBox[i][j].g, 255));
+
+                    imageBox[i][j].b -= laplaceMask[i][j].b;
+                    imageBox[i][j].b = Math.max(0, Math.min(imageBox[i][j].b, 255));
+                }
+            }
+            const res = await this.saveImageBox(imagePath, imageBox);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+    
     async log(imagePath, coef){
         try{
             let {imageBox, height, width} = await this.createImageBox(imagePath);
@@ -160,7 +214,9 @@ class images{
                 const grayValue = Jimp.rgbaToInt(magnitude, magnitude, magnitude, 255);
                 imageSobel.setPixelColor(grayValue, x, y);
             });
-            await imageSobel.writeAsync('uploads/output.jpg');
+            sufix++;
+            await imageSobel.writeAsync(`uploads/output${sufix}.jpg`);
+            return `output${sufix}.jpg`;
         } catch (error) {
             console.error('Error:', error);
         }
@@ -334,8 +390,9 @@ class images{
                 this.bitmap.data[idx + 1] = pixel.g;
                 this.bitmap.data[idx + 2] = pixel.b;
             })
-            await image.writeAsync('uploads/output.jpg');
-            return true;
+            sufix++;
+            await image.writeAsync(`uploads/output${sufix}.jpg`);
+            return `output${sufix}.jpg`;
         }catch(err){
             console.log(err)
             return false;
