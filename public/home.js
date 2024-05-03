@@ -30,7 +30,6 @@ uploadBtn.addEventListener('change', async()=>{
 })
 
 function alterateImage(imgTitle){
-    console.log(imageContainer.children.length);
     if(imageContainer.children.length > 0) imageContainer.removeChild(imageContainer.children[0]);
     const imageField = document.createElement('img');
     imageField.setAttribute('id', 'image-aplication');
@@ -67,7 +66,10 @@ brightnessBtn.addEventListener('click', async()=>{
     };
     try{
         const res = await fetch('http://localhost:8080/brightness', fetchOptions);
-        if(res.status == 200) alterateImage(imageName);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);
+        }
     }catch(err){
         console.log(err);
     }
@@ -191,7 +193,10 @@ smoothingBtn.addEventListener('click', async()=>{
     };
     try{
         const res = await fetch('http://localhost:8080/meanSmoothing', fetchOptions);
-        if(res.status == 200) alterateImage(imageName);
+        if(res.status == 200){
+            const body = await res.json()
+            alterateImage(body.msg);
+        }
     }catch(err){
         console.log(err);
     }
@@ -211,7 +216,10 @@ gaussBtn.addEventListener('click', async()=>{
     };
     try{
         const res = await fetch('http://localhost:8080/gauss', fetchOptions);
-        if(res.status == 200) alterateImage(imageName);
+        if(res.status == 200){
+            const body = await res.json()
+            alterateImage(body.msg);
+        }
     }catch(err){
         console.log(err);
     }
@@ -262,7 +270,35 @@ invertBtn.addEventListener('click', async()=>{
     };
     try{
         const res = await fetch('http://localhost:8080/invert', fetchOptions);
-        if(res.status == 200) alterateImage('output.jpg');
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);   
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
+
+///Aguçamento Laplaciano
+const laplacianoBtn = document.getElementById('laplaciano-btn');
+laplacianoBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/laplaciano', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);   
+        }
     }catch(err){
         console.log(err);
     }
@@ -284,7 +320,10 @@ sobelBtn.addEventListener('click', async()=>{
     };
     try{
         const res = await fetch('http://localhost:8080/sobel', fetchOptions);
-        if(res.status == 200) alterateImage('output.jpg');
+        if(res.status == 200){
+            const body = await res.json()
+            alterateImage(body.msg);
+        }
     }catch(err){
         console.log(err);
     }
