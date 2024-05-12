@@ -91,7 +91,55 @@ class images{
             return false;
         }
     }
+    async hiboost(imagePath){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let blurred = [];
+            let filterImage = [];
+            for(let i = 0; i < height; i++){
+                let line = [];
+                for (let j = 0; j < width; j++) {
+                    let pixel = { r: 0, g: 0, b: 0 };
+                    let count = 0;
+                    for (let k = -1; k <= 1; k++) {
+                        for (let l = -1; l <= 1; l++) {
+                            if (i + k >= 0 && i + k < height && j + l >= 0 && j + l < width) {
+                                pixel.r += imageBox[i + k][j + l].r;
+                                pixel.g += imageBox[i + k][j + l].g;
+                                pixel.b += imageBox[i + k][j + l].b;
+                                count++;
+                            }
+                        }
+                    }
+                    pixel.r /= count;
+                    pixel.g /= count;
+                    pixel.b /= count;
     
+                    pixel.r = Math.round(pixel.r);
+                    pixel.g = Math.round(pixel.g);
+                    pixel.b = Math.round(pixel.b);
+                    line.push(pixel);
+                }
+                blurred.push(line);
+            }
+            for(let i = 0; i < height; i++){
+                let line = [];
+                for(let j = 0; j < width; j++){
+                    let pixel = { r: 0, g: 0, b: 0 };
+                    pixel.r = Math.max(0, Math.min(imageBox[i][j].r - blurred[i][j].r, 255));
+                    pixel.g = Math.max(0, Math.min(imageBox[i][j].g - blurred[i][j].g, 255));
+                    pixel.b = Math.max(0, Math.min(imageBox[i][j].b - blurred[i][j].b, 255));
+                    line.push(pixel);
+                }
+                filterImage.push(line);
+            }
+            const res = await this.saveImageBox(imagePath, filterImage);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
     async log(imagePath, coef){
         try{
             let {imageBox, height, width} = await this.createImageBox(imagePath);
@@ -144,6 +192,36 @@ class images{
         }catch(err){
             console.log(err);
             return false;
+        }
+    }
+
+    async histogramGraph(imagePath){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let histogram = {
+                width: width,
+                height: height,
+                red: Array(256).fill(0),
+                green: Array(256).fill(0),
+                blue: Array(256).fill(0)
+            };
+            console.log(imageBox[0][0].r);
+            for(let i=0; i<height; i++){
+                for(let j=0; j<width; j++){
+                    histogram.red[imageBox[i][j].r]++;
+                    histogram.green[imageBox[i][j].g]++;
+                    histogram.blue[imageBox[i][j].b]++;
+                }
+            }
+            let totalPixels = width * height;
+            for(let i = 0; i < 256; i++){
+                histogram.red[i] /= totalPixels;
+                histogram.green[i] /= totalPixels;
+                histogram.blue[i] /= totalPixels;
+            }
+            return histogram;
+        }catch(err){
+            console.log(err);
         }
     }
     async binary(imagePath, coef){
@@ -263,6 +341,62 @@ class images{
             return false;
         }
     }
+    async gaussSmoothing(imagePath, coef){
+        try{
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
+            let imageResult = [];
+            let center = Math.floor(coef / 2);
+            let mask = getTypicalMask(coef, center);
+    
+            for(let i = 0; i < height; i++){
+                let line = [];
+                for (let j = 0; j < width; j++){
+                    let sum = 0;
+                    let pixel = { r: 0, g: 0, b: 0 };
+                    for(let m = 0; m < coef; m++){
+                        for(let n = 0; n < coef; n++){
+                            let rowIndex = i - center + m;
+                            let colIndex = j - center + n;
+                            if (rowIndex >= 0 && rowIndex < height && colIndex >= 0 && colIndex < width) {
+                                pixel.r += imageBox[rowIndex][colIndex].r * mask[m][n];
+                                pixel.g += imageBox[rowIndex][colIndex].g * mask[m][n];
+                                pixel.b += imageBox[rowIndex][colIndex].b * mask[m][n];
+                            }
+                        }
+                    }
+                    line.push(pixel);
+                }
+                imageResult.push(line);
+            }
+            const res = await this.saveImageBox(imagePath, imageResult);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+    
+    getTypicalMask(n, center){
+        let mask = [];
+        for (let i = 0; i < n; i++) {
+            mask[i] = new Array(n).fill(0);
+        }
+        let total_weight = 0;
+        for(let i = 0; i < n; i++){
+            for (let j = 0; j < n; j++) {
+                let x = i - center;
+                let y = j - center;
+                mask[i][j] = Math.exp(-(x ** 2 + y ** 2) / 2);
+                total_weight += mask[i][j];
+            }
+        }
+        for(let i = 0; i < n; i++){
+            for (let j = 0; j < n; j++) {
+                mask[i][j] /= total_weight;
+            }
+        }
+        return mask;
+    }    
 
     async rotate(imagePath, ang, rp){
         try{

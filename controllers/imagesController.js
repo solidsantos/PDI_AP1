@@ -45,6 +45,18 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+    async histogramGraph(req, res){
+        const image = req.body;
+        try{
+            const result = await images.histogramGraph(image.title);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+
     async binary(req, res){
         const image = req.body;
         try{
@@ -94,6 +106,17 @@ class ImagesController{
         const image = req.body;
         try{
             const result = await images.laplaciano(image.title);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async hiboost(req, res){
+        const image = req.body;
+        try{
+            const result = await images.hiboost(image.title);
             res.setHeader('Cache-Control', 'no-cache');
             return res.status(200).json({msg: result});
         }catch(err){
