@@ -433,6 +433,51 @@ sobelBtn.addEventListener('click', async()=>{
     }
 })
 
+const sobelXBtn = document.getElementById('sobelX-btn');
+sobelXBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/sobelX', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json()
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
+const sobelYBtn = document.getElementById('sobelY-btn');
+sobelYBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/sobelY', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json()
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
 
 
 //// other

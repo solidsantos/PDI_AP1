@@ -250,10 +250,13 @@ class images{
         }
 
     }
-    async sobel(imagePath) {
+    async sobel(imagePath, arg){
         try{
             const image = await Jimp.read(path.resolve('uploads', imagePath));
             const imageSobel = await Jimp.create(image.bitmap.width, image.bitmap.height);
+            const imageSobelX = await Jimp.create(image.bitmap.width, image.bitmap.height);
+            const imageSobelY = await Jimp.create(image.bitmap.width, image.bitmap.height);
+    
 
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
                 const pixel = [
@@ -281,8 +284,24 @@ class images{
                     image.bitmap.data[((y + 1) * image.bitmap.width + x - 1) * 4] +
                     2 * image.bitmap.data[((y + 1) * image.bitmap.width + x) * 4] +
                     image.bitmap.data[((y + 1) * image.bitmap.width + x + 1) * 4]
-                    );
-                    
+                );
+                
+                let magnitudeX = Math.abs(sobelX);
+                let magnitudeY = Math.abs(sobelY);
+
+                magnitudeX = Math.floor(magnitudeX);
+                if(magnitudeX < 0) magnitudeX = 0;
+                if(magnitudeX > 255) magnitudeX = 255;
+
+                magnitudeY = Math.floor(magnitudeY);
+                if(magnitudeY < 0) magnitudeY = 0;
+                if(magnitudeY > 255) magnitudeY = 255;
+
+                const grayValueX = Jimp.rgbaToInt(magnitudeX, magnitudeX, magnitudeX, 255);
+                const grayValueY = Jimp.rgbaToInt(magnitudeY, magnitudeY, magnitudeY, 255);
+                
+                imageSobelX.setPixelColor(grayValueX, x, y);
+                imageSobelY.setPixelColor(grayValueY, x, y);    
 
                 let magnitude = Math.sqrt(sobelX * sobelX + sobelY * sobelY);
                 magnitude = Math.floor(magnitude);
@@ -293,7 +312,9 @@ class images{
                 imageSobel.setPixelColor(grayValue, x, y);
             });
             sufix++;
-            await imageSobel.writeAsync(`uploads/output${sufix}.jpg`);
+            if(arg=='x') await imageSobelX.writeAsync(`uploads/output${sufix}.jpg`);
+            else if(arg=='y') await imageSobelY.writeAsync(`uploads/output${sufix}.jpg`);
+            else await imageSobel.writeAsync(`uploads/output${sufix}.jpg`);
             return `output${sufix}.jpg`;
         } catch (error) {
             console.error('Error:', error);

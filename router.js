@@ -15,6 +15,8 @@ router.post('/binary', imgC.binary);
 router.post('/meanSmoothing', imgC.meanSmoothing);
 router.post('/invert', imgC.invert);
 router.post('/sobel', imgC.sobel);
+router.post('/sobelX', imgC.sobelX);
+router.post('/sobelY', imgC.sobelY);
 router.post('/rotate', imgC.rotation);
 router.post('/laplaciano', imgC.laplaciano);
 router.post('/hiboost', imgC.hiboost);
