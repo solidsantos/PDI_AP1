@@ -35,6 +35,7 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 - Aguçamento (nitidez) por Laplaciano ✅
 - High-Boost ✅
 
+
 [Parte 5]:
 
 - Filtros de Sobel – x e y separados
