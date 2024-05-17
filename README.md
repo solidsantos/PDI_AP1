@@ -37,7 +37,7 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 
 [Parte 5]:
 
-- Filtros de Sobel – x e y separados
+- Filtros de Sobel – x e y separados ✅
 - Detecção não linear de bordas pelo gradiente (magnitude) ✅
 
 [Parte 6]:
