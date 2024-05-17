@@ -7,6 +7,7 @@
       rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script defer src="home.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>PDI</title>
 </head>
 <body>
@@ -60,7 +61,11 @@
 
                 </div>
                 <button id="invert-btn">Inverter imagem</button>
+                <button id="histogram-btn">Gerar Histograma</button>
                 <button id="laplaciano-btn">Aguçamento Laplaciano</button>
+                <button id="hiboost-btn">High-boost</button>
+                <button id="sobelX-btn">Visualizar Sobel em X</button>
+                <button id="sobelY-btn">Visualizar Sobel em Y</button>
                 <button id="sobel-btn">Aplicar Sobel</button>
                 <div class="sub-div">
                     <label for="rotation">
@@ -75,6 +80,9 @@
         </div>
         <div id="image-container">
             <img id="image-aplication">
+        </div>
+        <div id="image-thumb">
+            <canvas id="histogram"></canvas>
         </div>
     </section>
 </body>

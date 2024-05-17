@@ -45,6 +45,18 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+    async histogramGraph(req, res){
+        const image = req.body;
+        try{
+            const result = await images.histogramGraph(image.title);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+
     async binary(req, res){
         const image = req.body;
         try{
@@ -101,16 +113,48 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
-    async sobel(req, res){
+    async hiboost(req, res){
         const image = req.body;
         try{
-            const result = await images.sobel(image.title);
+            const result = await images.hiboost(image.title);
+            res.setHeader('Cache-Control', 'no-cache');
             return res.status(200).json({msg: result});
         }catch(err){
             console.log(err);
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+    async sobel(req, res){
+        const image = req.body;
+        try{
+            const result = await images.sobel(image.title, 'a');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async sobelX(req, res){
+        const image = req.body;
+        try{
+            const result = await images.sobel(image.title, 'x');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async sobelY(req, res){
+        const image = req.body;
+        try{
+            const result = await images.sobel(image.title, 'y');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    
 }
 
 

@@ -129,11 +129,88 @@ gamaBtn.addEventListener('click', async()=>{
     };
     try{
         const res = await fetch('http://localhost:8080/gama', fetchOptions);
-        if(res.status == 200) alterateImage(imageName);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);   
+        }
     }catch(err){
         console.log(err);
     }
 })
+
+
+/// Geracao de Histograma
+
+
+const histBtn = document.getElementById('histogram-btn');
+histBtn.addEventListener('click', async ()=>{
+    const body = JSON.stringify({
+        title: imageName
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/histogramGraph', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            console.log(body);
+            let histogram = body.msg;
+            var histogramaData = {
+                labels: Array.from({length: 256}, (_, i) => i),
+                datasets: [
+                    {
+                        label: 'Vermelho',
+                        data: histogram.red,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Verde',
+                        data: histogram.green,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Azul',
+                        data: histogram.blue,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            };
+    
+            var histogramaOptions = {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            };
+            var ctx = document.getElementById('histogram').getContext('2d');
+
+            var histogramaChart = new Chart(ctx, {
+                type: 'bar',
+                data: histogramaData,
+                options: histogramaOptions
+            });
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
 
 /// Linearização (binarização)
 
@@ -305,6 +382,33 @@ laplacianoBtn.addEventListener('click', async()=>{
 })
 
 
+/// High-Boost
+
+const hiboostBtn = document.getElementById('hiboost-btn');
+hiboostBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/hiboost', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);   
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
+
+
 /// Sobel
 const sobelBtn = document.getElementById('sobel-btn');
 sobelBtn.addEventListener('click', async()=>{
@@ -329,6 +433,51 @@ sobelBtn.addEventListener('click', async()=>{
     }
 })
 
+const sobelXBtn = document.getElementById('sobelX-btn');
+sobelXBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/sobelX', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json()
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
+const sobelYBtn = document.getElementById('sobelY-btn');
+sobelYBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/sobelY', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json()
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
 
 
 //// other
