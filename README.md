@@ -16,7 +16,7 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 - Negativo ✅
 - Transformações logarítmicas ✅
 - Potência (correção de gama) linear definidas por partes ✅ (questoes gráficas incompletas)
-- Esteganografia
+- Esteganografia ✅
 
 [Parte 2]:
 
