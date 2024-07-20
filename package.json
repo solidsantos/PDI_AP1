@@ -2,9 +2,10 @@
   "name": "pdi_ap1",
   "version": "1.0.0",
   "description": "Desenvolver um programa processador de imagens com interface gráfica. O programa deve:",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon"
   },
   "author": "",
   "license": "ISC",
