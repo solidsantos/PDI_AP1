@@ -13,4 +13,4 @@ app.use(bodyParser.json());
 app.use('/', router);
 
 app.listen(PORT);
-console.log(`the server ir running on http://localhost:${8080}/`);
+console.log(`the server is running on http://localhost:${8080}/`);

@@ -20,5 +20,6 @@ router.post('/sobelY', imgC.sobelY);
 router.post('/rotate', imgC.rotation);
 router.post('/laplaciano', imgC.laplaciano);
 router.post('/hiboost', imgC.hiboost);
-
+router.post('/encode', imgC.encode);
+router.post('/decode', imgC.decode);
 module.exports = router;
