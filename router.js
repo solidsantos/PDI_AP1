@@ -7,7 +7,9 @@ router.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 router.get('/', (req, res)=>{ return res.render('index.ejs'); })
 
 router.post('/upImage', imgC.new);
+router.post('/upChroma', imgC.newChroma);
 router.post('/brightness', imgC.brightness);
+router.post('/sepia', imgC.sepia);
 router.post('/log', imgC.log);
 router.post('/gama', imgC.gama);
 router.post('/histogramGraph', imgC.histogramGraph);
@@ -20,5 +22,6 @@ router.post('/sobelY', imgC.sobelY);
 router.post('/rotate', imgC.rotation);
 router.post('/laplaciano', imgC.laplaciano);
 router.post('/hiboost', imgC.hiboost);
+router.post('/chroma', imgC.chroma)
 
 module.exports = router;

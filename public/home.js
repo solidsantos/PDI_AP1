@@ -1,6 +1,6 @@
 var imageName
 const uploadBtn = document.getElementById('btn-upload');
-
+const chromaUp = document.getElementById('chroma-upload');
 
 const imageContainer = document.getElementById('image-container');
 const subdivs = document.getElementsByClassName('sub-div');
@@ -23,6 +23,29 @@ uploadBtn.addEventListener('change', async()=>{
         const content = await res.json();
         imageName = content.link;
         alterateImage(imageName);
+    }catch(err){
+        console.log(err);
+    }
+
+})
+
+
+chromaUp.addEventListener('change', async()=>{
+    const reader = new FileReader();
+    reader.onload = () => {
+        const base64Content = reader.result;
+    };
+    const formData = new FormData();
+    formData.append('image', chromaUp.files[0]);
+
+    const fetchOptions = {
+        method: 'POST',
+        body: formData,
+    };
+
+    try{
+        const res = await fetch('http://localhost:8080/upChroma', fetchOptions);
+        const content = await res.json();
     }catch(err){
         console.log(err);
     }
@@ -74,6 +97,33 @@ brightnessBtn.addEventListener('click', async()=>{
         console.log(err);
     }
 })
+
+/// Sépia
+
+const sepiaBtn = document.getElementById('sepia-btn');
+
+sepiaBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName,
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/sepia', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
 
 /// Transformação logaritma:
 
@@ -482,3 +532,71 @@ sobelYBtn.addEventListener('click', async()=>{
 
 //// other
 
+function convertIntoHSi(){
+    try{
+        const rgbColors = document.getElementsByClassName('rgb-input');
+        const hsiLabel = document.getElementById('hsi-label');
+    
+        let r = parseInt(rgbColors[0].value); if(r>255) r = 255; else if(r<0) r = 0;
+        let g = parseInt(rgbColors[1].value); if(g>255) g = 255; else if(g<0) g = 0;
+        let b = parseInt(rgbColors[2].value); if(b>255) b = 255; else if(b<0) b = 0;
+
+        r = r/255.0;
+        g = g/255.0;
+        b = b/255.0;
+
+        let i = (r+g+b)/3;
+        let s = (i == 0) ? 0 : 1 - (Math.min(r, g, b) / i);
+        let h;
+        if(s==0 || (r==g && r==b)) h = 0;
+        else{
+            const teta = Math.acos((0.5 * ((r-g) + (r-b)))/Math.sqrt((r-g)**2 + (r-b)*(g-b)));
+            if(b<=g) h = teta;
+            else h = 2 * Math.PI - teta;
+            h = (h*180)/Math.PI;
+        } 
+
+        hsiLabel.innerText = `h: ${h.toFixed(2)}; s: ${s.toFixed(2)}; i: ${i.toFixed(2)}`;;
+    }catch(err){
+        console.log(err);
+    }
+
+
+}
+
+
+/// Chroma
+
+const chromaRange = document.getElementById('chroma-range');
+const chromaBtn = document.getElementById('chroma-btn');
+const chromaRGB = document.getElementsByClassName('chroma-rgb');
+var chromaCoef = 100;
+
+chromaRange.addEventListener('change', ()=>{
+    chromaCoef = chromaRange.value;
+})
+chromaBtn.addEventListener('click', async()=>{
+    let rgb = {};
+    rgb.r = chromaRGB[0].value; rgb.g = chromaRGB[1].value; rgb.b = chromaRGB[2].value;
+    const body = JSON.stringify({
+        title: imageName,
+        rgb: rgb,
+        range: (parseInt(chromaCoef))
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/chroma', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
