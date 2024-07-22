@@ -24,4 +24,6 @@ router.post('/laplaciano', imgC.laplaciano);
 router.post('/hiboost', imgC.hiboost);
 router.post('/chroma', imgC.chroma)
 
+router.post('/encode', imgC.encode);
+router.post('/decode', imgC.decode);
 module.exports = router;

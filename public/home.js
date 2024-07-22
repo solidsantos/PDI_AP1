@@ -5,7 +5,7 @@ const chromaUp = document.getElementById('chroma-upload');
 const imageContainer = document.getElementById('image-container');
 const subdivs = document.getElementsByClassName('sub-div');
 
-uploadBtn.addEventListener('change', async()=>{
+uploadBtn.addEventListener('change', async () => {
     const reader = new FileReader();
     reader.onload = () => {
         const base64Content = reader.result;
@@ -18,11 +18,34 @@ uploadBtn.addEventListener('change', async()=>{
         body: formData,
     };
 
-    try{
+    try {
         const res = await fetch('http://localhost:8080/upImage', fetchOptions);
         const content = await res.json();
         imageName = content.link;
         alterateImage(imageName);
+    } catch (err) {
+        console.log(err);
+    }
+
+})
+
+
+chromaUp.addEventListener('change', async()=>{
+    const reader = new FileReader();
+    reader.onload = () => {
+        const base64Content = reader.result;
+    };
+    const formData = new FormData();
+    formData.append('image', chromaUp.files[0]);
+
+    const fetchOptions = {
+        method: 'POST',
+        body: formData,
+    };
+
+    try{
+        const res = await fetch('http://localhost:8080/upChroma', fetchOptions);
+        const content = await res.json();
     }catch(err){
         console.log(err);
     }
@@ -52,13 +75,13 @@ chromaUp.addEventListener('change', async()=>{
 
 })
 
-function alterateImage(imgTitle){
-    if(imageContainer.children.length > 0) imageContainer.removeChild(imageContainer.children[0]);
+function alterateImage(imgTitle) {
+    if (imageContainer.children.length > 0) imageContainer.removeChild(imageContainer.children[0]);
     const imageField = document.createElement('img');
     imageField.setAttribute('id', 'image-aplication');
     imageField.setAttribute('src', `/uploads/Loading_icon.gif`);
     imageContainer.appendChild(imageField);
-    setTimeout(()=>{
+    setTimeout(() => {
         imageField.setAttribute('src', `/uploads/${imgTitle}`);
         imageContainer.appendChild(imageField);
     }, 1000);
@@ -70,15 +93,15 @@ const brightnessRange = document.getElementById('brightness-range');
 const brightnessBtn = document.getElementById('brightness-btn');
 var brightnessCoef = 0;
 
-brightnessRange.addEventListener('change', ()=>{
+brightnessRange.addEventListener('change', () => {
     const val = document.getElementById('brightness-value');
     brightnessCoef = brightnessRange.value;
     val.innerText = brightnessCoef;
 })
-brightnessBtn.addEventListener('click', async()=>{
+brightnessBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName,
-        coef: 1 + (parseInt(brightnessCoef)/100)
+        coef: 1 + (parseInt(brightnessCoef) / 100)
     })
     const fetchOptions = {
         method: 'POST',
@@ -87,13 +110,13 @@ brightnessBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/brightness', fetchOptions);
-        if(res.status == 200){
+        if (res.status == 200) {
             const body = await res.json();
             alterateImage(body.msg);
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 })
@@ -131,10 +154,10 @@ const logInput = document.getElementById('log-input');
 const logBtn = document.getElementById('log-btn');
 var logCoef = 0;
 
-logInput.addEventListener('change', ()=>{
+logInput.addEventListener('change', () => {
     logCoef = parseFloat(logInput.value);
 })
-logBtn.addEventListener('click', async ()=>{
+logBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName,
         coef: logCoef
@@ -146,10 +169,10 @@ logBtn.addEventListener('click', async ()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/log', fetchOptions);
-        if(res.status == 200) alterateImage(imageName);
-    }catch(err){
+        if (res.status == 200) alterateImage(imageName);
+    } catch (err) {
         console.log(err);
     }
 })
@@ -160,15 +183,15 @@ const gamaRange = document.getElementById('gama-range');
 const gamaBtn = document.getElementById('gama-btn');
 var gamaCoef = 0;
 
-gamaRange.addEventListener('change', ()=>{
+gamaRange.addEventListener('change', () => {
     const val = document.getElementById('gama-value');
     gamaCoef = gamaRange.value;
     val.innerText = gamaCoef;
 })
-gamaBtn.addEventListener('click', async()=>{
+gamaBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName,
-        coef: (parseInt(gamaCoef)/10)
+        coef: (parseInt(gamaCoef) / 10)
     })
     const fetchOptions = {
         method: 'POST',
@@ -177,13 +200,13 @@ gamaBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/gama', fetchOptions);
-        if(res.status == 200){
+        if (res.status == 200) {
             const body = await res.json();
-            alterateImage(body.msg);   
+            alterateImage(body.msg);
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 })
@@ -193,7 +216,7 @@ gamaBtn.addEventListener('click', async()=>{
 
 
 const histBtn = document.getElementById('histogram-btn');
-histBtn.addEventListener('click', async ()=>{
+histBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName
     })
@@ -204,14 +227,14 @@ histBtn.addEventListener('click', async ()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/histogramGraph', fetchOptions);
-        if(res.status == 200){
+        if (res.status == 200) {
             const body = await res.json();
             console.log(body);
             let histogram = body.msg;
             var histogramaData = {
-                labels: Array.from({length: 256}, (_, i) => i),
+                labels: Array.from({ length: 256 }, (_, i) => i),
                 datasets: [
                     {
                         label: 'Vermelho',
@@ -236,7 +259,7 @@ histBtn.addEventListener('click', async ()=>{
                     }
                 ]
             };
-    
+
             var histogramaOptions = {
                 scales: {
                     x: {
@@ -256,7 +279,7 @@ histBtn.addEventListener('click', async ()=>{
                 options: histogramaOptions
             });
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 })
@@ -268,12 +291,12 @@ const binaryRange = document.getElementById('binary-range');
 const binaryBtn = document.getElementById('binary-btn');
 var binaryCoef = 0;
 
-binaryRange.addEventListener('change', ()=>{
+binaryRange.addEventListener('change', () => {
     const val = document.getElementById('binary-value');
     binaryCoef = binaryRange.value;
     val.innerText = binaryCoef;
 })
-binaryBtn.addEventListener('click', async()=>{
+binaryBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName,
         coef: (parseInt(binaryCoef))
@@ -285,10 +308,10 @@ binaryBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/binary', fetchOptions);
-        if(res.status == 200) alterateImage(imageName);
-    }catch(err){
+        if (res.status == 200) alterateImage(imageName);
+    } catch (err) {
         console.log(err);
     }
 })
@@ -301,12 +324,12 @@ const smoothingBtn = document.getElementById('smoothing-btn');
 const gaussBtn = document.getElementById('gauss-btn');
 var filterCoef = 0;
 
-filterRange.addEventListener('change', ()=>{
+filterRange.addEventListener('change', () => {
     const val = document.getElementById('filter-value');
-    filterCoef = 2*parseInt(filterRange.value) - 1;
+    filterCoef = 2 * parseInt(filterRange.value) - 1;
     val.innerText = filterCoef;
 })
-smoothingBtn.addEventListener('click', async()=>{
+smoothingBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName,
         coef: parseInt(filterCoef)
@@ -318,18 +341,18 @@ smoothingBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/meanSmoothing', fetchOptions);
-        if(res.status == 200){
+        if (res.status == 200) {
             const body = await res.json()
             alterateImage(body.msg);
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 })
 
-gaussBtn.addEventListener('click', async()=>{
+gaussBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName,
         coef: parseInt(filterCoef)
@@ -341,13 +364,13 @@ gaussBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/gauss', fetchOptions);
-        if(res.status == 200){
+        if (res.status == 200) {
             const body = await res.json()
             alterateImage(body.msg);
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 })
@@ -358,7 +381,7 @@ const argX = document.getElementById('rotation-x');
 const argY = document.getElementById('rotation-y');
 const rotationBtn = document.getElementById('rotation-btn');
 
-rotationBtn.addEventListener('click', async()=>{
+rotationBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName,
         ang: parseInt(degreeInput),
@@ -372,10 +395,10 @@ rotationBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/rotate', fetchOptions);
-        if(res.status == 200) alterateImage(imageName);
-    }catch(err){
+        if (res.status == 200) alterateImage(imageName);
+    } catch (err) {
         console.log(err);
     }
 })
@@ -384,7 +407,7 @@ rotationBtn.addEventListener('click', async()=>{
 
 /// Inverter cores
 const invertBtn = document.getElementById('invert-btn');
-invertBtn.addEventListener('click', async()=>{
+invertBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName
     })
@@ -395,13 +418,13 @@ invertBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/invert', fetchOptions);
-        if(res.status == 200){
+        if (res.status == 200) {
             const body = await res.json();
-            alterateImage(body.msg);   
+            alterateImage(body.msg);
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 })
@@ -409,7 +432,7 @@ invertBtn.addEventListener('click', async()=>{
 
 ///Aguçamento Laplaciano
 const laplacianoBtn = document.getElementById('laplaciano-btn');
-laplacianoBtn.addEventListener('click', async()=>{
+laplacianoBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName
     })
@@ -420,13 +443,13 @@ laplacianoBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/laplaciano', fetchOptions);
-        if(res.status == 200){
+        if (res.status == 200) {
             const body = await res.json();
-            alterateImage(body.msg);   
+            alterateImage(body.msg);
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 })
@@ -435,7 +458,7 @@ laplacianoBtn.addEventListener('click', async()=>{
 /// High-Boost
 
 const hiboostBtn = document.getElementById('hiboost-btn');
-hiboostBtn.addEventListener('click', async()=>{
+hiboostBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName
     })
@@ -446,13 +469,13 @@ hiboostBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/hiboost', fetchOptions);
-        if(res.status == 200){
+        if (res.status == 200) {
             const body = await res.json();
-            alterateImage(body.msg);   
+            alterateImage(body.msg);
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 })
@@ -461,7 +484,7 @@ hiboostBtn.addEventListener('click', async()=>{
 
 /// Sobel
 const sobelBtn = document.getElementById('sobel-btn');
-sobelBtn.addEventListener('click', async()=>{
+sobelBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName
     })
@@ -472,19 +495,19 @@ sobelBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/sobel', fetchOptions);
-        if(res.status == 200){
+        if (res.status == 200) {
             const body = await res.json()
             alterateImage(body.msg);
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 })
 
 const sobelXBtn = document.getElementById('sobelX-btn');
-sobelXBtn.addEventListener('click', async()=>{
+sobelXBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName
     })
@@ -495,19 +518,19 @@ sobelXBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/sobelX', fetchOptions);
-        if(res.status == 200){
+        if (res.status == 200) {
             const body = await res.json()
             alterateImage(body.msg);
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 })
 
 const sobelYBtn = document.getElementById('sobelY-btn');
-sobelYBtn.addEventListener('click', async()=>{
+sobelYBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName
     })
@@ -518,13 +541,68 @@ sobelYBtn.addEventListener('click', async()=>{
             'Content-Type': 'application/json'
         }
     };
-    try{
+    try {
         const res = await fetch('http://localhost:8080/sobelY', fetchOptions);
-        if(res.status == 200){
+        if (res.status == 200) {
             const body = await res.json()
             alterateImage(body.msg);
         }
-    }catch(err){
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+const encodeButton = document.getElementById('encode-btn');
+const textSteg = document.getElementById('steg-text');
+encodeButton.addEventListener('click', async () => {
+    const body = JSON.stringify({
+        title: imageName,
+        text: textSteg.value
+    });
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try {
+        const res = await fetch('http://localhost:8080/encode', fetchOptions);
+        if (res.status == 200) {
+            const body = await res.json();
+            window.alert(body.msg);
+        }
+    } catch (err) {
+        console.log(err);
+    }
+});
+const decodeButton = document.getElementById('decode-btn');
+decodeButton.addEventListener('click', async () => {
+    const body = JSON.stringify({
+        title: imageName,
+    });
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try {
+        const res = await fetch('http://localhost:8080/decode', fetchOptions);
+        if (res.status == 200) {
+            const body = await res.json();
+
+            // Seleciona o elemento onde a mensagem será exibida
+            const messageContainer = document.getElementById('decoded-container');
+
+            // Insere o texto no elemento
+            messageContainer.innerHTML = `
+                <h1>Texto Decodificado</h1>
+                <p>${body.msg}</p>
+            `;
+        }
+    } catch (err) {
         console.log(err);
     }
 })
