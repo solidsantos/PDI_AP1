@@ -2,6 +2,7 @@ const multer = require('multer');
 const images = require('../services/images');
 const mStorage = require('../services/multerConfig');
 const upload = multer({storage: mStorage});
+let chromeCache;
 
 class ImagesController{
     async new(req, res){
@@ -12,10 +13,32 @@ class ImagesController{
             return res.status(200).json({link: filename});
         });
     }
+
+    async newChroma(req, res){
+        upload.single('image')(req, res, (err) => {
+            const filename = req.file.filename;
+            chromeCache = req.file.filename;;
+            res.setHeader('Cache-Control', 'no-cache');
+            if(err) return res.status(400).json({ message: err.message });
+            return res.status(200).json({link: filename});
+        });
+    }
+
     async brightness(req, res){
         const image = req.body;
         try{
             const result = await images.brighten(image.title, image.coef);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async sepia(req, res){
+        const image = req.body;
+        try{
+            const result = await images.sepia(image.title, image.coef);
             res.setHeader('Cache-Control', 'no-cache');
             return res.status(200).json({msg: result});
         }catch(err){
@@ -60,6 +83,7 @@ class ImagesController{
     async binary(req, res){
         const image = req.body;
         try{
+            console.log(image.coef);
             const result = await images.binary(image.title, image.coef);
             res.setHeader('Cache-Control', 'no-cache');
             return res.status(200).json({msg: result});
@@ -154,6 +178,16 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+    async chroma(req, res){
+        const image = req.body;
+        try{
+            const result = await images.chroma(image.title, chromeCache, image.rgb, image.range);
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
     async encode(req, res){
         const image = req.body;
         try {
@@ -176,6 +210,7 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+    
 }
 
 

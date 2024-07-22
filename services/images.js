@@ -113,6 +113,30 @@ class images {
             return false;
         }
     }
+    async sepia(imagePath){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let imageResult = [];
+
+            if(!this.convertIntoGray(imageBox, height, width)) return false;
+            for(let i=0; i<height; i++){
+                for(let j=0; j<width; j++){
+                    let r = imageBox[i][j].r;
+                    let g = imageBox[i][j].g;
+                    let b = imageBox[i][j].b;
+
+                    imageBox[i][j].r = 0.393*r + 0.769*g + 0.189*b; if(imageBox[i][j].r > 255) imageBox[i][j].r = 255;
+                    imageBox[i][j].g = 0.349*r + 0.868*g + 0.168*b; if(imageBox[i][j].g > 255) imageBox[i][j].g = 255;
+                    imageBox[i][j].b = 0.272*r + 0.534*g + 0.131*b; if(imageBox[i][j].b > 255) imageBox[i][j].b = 255;
+                }
+            }
+            const res = await this.saveImageBox(imagePath, imageBox);
+            return res;
+        }catch(err){
+            console.log(err)
+            return false;
+        }
+    }
     async invert(imagePath) {
         try {
             const image = await Jimp.read(path.resolve('uploads', imagePath));
@@ -344,8 +368,7 @@ class images {
             const imageSobel = await Jimp.create(image.bitmap.width, image.bitmap.height);
             const imageSobelX = await Jimp.create(image.bitmap.width, image.bitmap.height);
             const imageSobelY = await Jimp.create(image.bitmap.width, image.bitmap.height);
-
-
+    
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
                 const pixel = [
                     this.bitmap.data[idx],
@@ -506,7 +529,33 @@ class images {
         }
         return mask;
     }
+    async chroma(imagePath, imagePathBG, {r, g, b}, range){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let result = await this.createImageBox(imagePathBG);
+            let {bgImageBox, bgHeight, bgWidth} = {}
+            bgImageBox = result.imageBox;
+            bgHeight = result.height;
+            bgWidth = result.width;
+            console.log({ bgHeight, bgWidth})
+            for(let i=0; i<height; i++){
+                for(let j=0; j<width; j++){
+                    let distance = Math.sqrt( (r - imageBox[i][j].r)**2 + (g - imageBox[i][j].g)**2 + (b - imageBox[i][j].b)**2 );
+                    if(distance <= range && i< bgHeight && j < bgWidth){
+                        imageBox[i][j].r = bgImageBox[i][j].r;
+                        imageBox[i][j].g = bgImageBox[i][j].g;
+                        imageBox[i][j].b = bgImageBox[i][j].b;
+                    }
+                }
+            }
 
+            const res = await this.saveImageBox(imagePath, imageBox);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false
+        }
+    }
     async rotate(imagePath, ang, rp) {
         try {
             let imageBox = await this.createImageBox(imagePath);
@@ -756,6 +805,22 @@ class images {
             return decodedText;
 
         } catch (err) {
+            console.log(err);
+            return false;
+        }
+    }
+    convertIntoGray(imageBox, height, width){
+        try{
+            for(let i=0; i<height; i++){
+                for(let j=0; j<width; j++){
+                    let gray = 0.299 * imageBox[i][j].r  + 0.587 * imageBox[i][j].g + 0.114 * imageBox[i][j].b;
+                    imageBox[i][j].r = gray;
+                    imageBox[i][j].g = gray;
+                    imageBox[i][j].b = gray;
+                }
+            }
+            return true;
+        }catch(err){
             console.log(err);
             return false;
         }

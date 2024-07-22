@@ -60,7 +60,35 @@
                     <button id="log-btn">></button>
 
                 </div>
+                <div class="sub-div" >
+                    <p>(R, G, B):</p>
+                    <div style="display: flex;">
+                        <input style="width: 20%;" type="number" class="rgb-input" onchange="convertIntoHSi()" value="0" placeholder="r">
+                        <input style="width: 20%;" type="number" class="rgb-input" onchange="convertIntoHSi()" value="0" placeholder="g">
+                        <input style="width: 20%;" type="number" class="rgb-input" onchange="convertIntoHSi()" value="0" placeholder="b">
+                    </div>
+                    <p id="hsi-label">Cor HSI</p>
+                </div>
+                <div class="sub-div">
+                    <p>
+                        chroma-key:
+                    </p>
+                    <input type="file" name="" id="chroma-upload" accept="image/*">
+                    <div style="display: flex;">
+                        <input style="width: 20%;" type="number" class="chroma-rgb" value="0">
+                        <input style="width: 20%;" type="number" class="chroma-rgb" value="0">
+                        <input style="width: 20%;" type="number" class="chroma-rgb" value="0">
+                    </div>
+                    <div style="display: flex; align-items: center">
+                        <p>intervalo:</p>
+                        <input style="width: 20%;" type="number" value="100" id="chroma-range">
+                    </div>
+                    <button id="chroma-btn">
+                        Aplicar chroma-key;
+                    </button>
+                </div>
                 <button id="invert-btn">Inverter imagem</button>
+                <button id="sepia-btn">Transformar Sépia</button>
                 <button id="histogram-btn">Gerar Histograma</button>
                 <button id="laplaciano-btn">Aguçamento Laplaciano</button>
                 <button id="hiboost-btn">High-boost</button>
