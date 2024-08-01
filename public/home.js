@@ -147,6 +147,60 @@ sepiaBtn.addEventListener('click', async()=>{
     }
 })
 
+//// Escala de cinza
+
+const grayBtn = document.getElementById('gray-btn');
+
+grayBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName,
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/gray', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
+
+/// Escala de cinza ponderada
+
+
+const grayPondBtn = document.getElementById('grayPond-btn');
+
+grayPondBtn.addEventListener('click', async()=>{
+    const body = JSON.stringify({
+        title: imageName,
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/grayPond', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
 
 /// Transformação logaritma:
 
@@ -455,6 +509,38 @@ laplacianoBtn.addEventListener('click', async () => {
 })
 
 
+/// Ajuste HSI
+const hsiBtn = document.getElementById('adjustHsi-btn');
+const hsiInputs = document.getElementsByClassName("hsiAd-input");
+
+hsiBtn.addEventListener('click', async () =>{
+    let hCoef, sCoef, iCoef;
+    hCoef = parseFloat(hsiInputs[0].value); sCoef = parseFloat(hsiInputs[1].value); iCoef = parseFloat(hsiInputs[2].value);
+    const body = JSON.stringify({
+        title: imageName,
+        hCoef,
+        sCoef,
+        iCoef
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try {
+        const res = await fetch('http://localhost:8080/adjustHsi', fetchOptions);
+        if (res.status == 200) {
+            const body = await res.json();
+            alterateImage(body.msg);
+        }
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+
 /// High-Boost
 
 const hiboostBtn = document.getElementById('hiboost-btn');
@@ -641,6 +727,50 @@ function convertIntoHSi(){
 
 
 }
+
+
+function convertIntoRgb(){
+    try{
+        const hsiColors = document.getElementsByClassName('hsi-input');
+        const rgbLabel = document.getElementById('rgb-label');
+    
+        let h = parseFloat(hsiColors[0].value);
+        let s = parseFloat(hsiColors[1].value); 
+        let i = parseFloat(hsiColors[2].value); 
+        
+        if(h > 360) h = 360; else if(h < 0) h = 0;
+        if(s > 1) s = 1; else if(s < 0) s = 0;
+        if(i > 1) i = 1; else if(i < 0) i = 0;
+
+        h = h * Math.PI / 180;
+
+        let r, g, b;
+        if(h >= 0 && h < 2 * Math.PI / 3) {
+            b = i * (1 - s);
+            r = i * (1 + (s * Math.cos(h) / Math.cos(Math.PI / 3 - h)));
+            g = 3 * i - (r + b);
+        }else if(h >= 2 * Math.PI / 3 && h < 4 * Math.PI / 3) {
+            h = h - 2 * Math.PI / 3;
+            r = i * (1 - s);
+            g = i * (1 + (s * Math.cos(h) / Math.cos(Math.PI / 3 - h)));
+            b = 3 * i - (r + g);
+        }else{
+            h = h - 4 * Math.PI / 3;
+            g = i * (1 - s);
+            b = i * (1 + (s * Math.cos(h) / Math.cos(Math.PI / 3 - h)));
+            r = 3 * i - (g + b);
+        }
+
+        r = Math.max(0, Math.min(1, r))*255;
+        g = Math.max(0, Math.min(1, g))*255;
+        b = Math.max(0, Math.min(1, b))*255;
+
+        rgbLabel.innerText = `r: ${r.toFixed(2)}; g: ${g.toFixed(2)}; b: ${b.toFixed(2)}`;;
+    }catch(err){
+        console.log(err);
+    }
+}
+
 
 
 /// Chroma

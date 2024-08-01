@@ -69,6 +69,24 @@
                     </div>
                     <p id="hsi-label">Cor HSI</p>
                 </div>
+                <div class="sub-div" >
+                    <p>Ajuste HSI:</p>
+                    <div style="display: flex;">
+                        <input style="width: 20%;" type="number" min="0" max="360" placeholder="matiz +(0-360)" class="hsiAd-input">
+                        <input style="width: 20%;" type="number" min="-1" max="1" placeholder="saturção *(0-2)" class="hsiAd-input">
+                        <input style="width: 20%;" type="number" min="-1" max="1" placeholder="brilho *-(0-2)" class="hsiAd-input">
+                    </div>
+                    <button id="adjustHsi-btn">Ajustar imagem</button>
+                </div>
+                <div class="sub-div" >
+                    <p>(H, S, I):</p>
+                    <div style="display: flex;">
+                        <input style="width: 20%;" type="number" class="hsi-input" onchange="convertIntoRgb()" value="0" placeholder="r">
+                        <input style="width: 20%;" type="number" class="hsi-input" onchange="convertIntoRgb()" value="0" placeholder="g">
+                        <input style="width: 20%;" type="number" class="hsi-input" onchange="convertIntoRgb()" value="0" placeholder="b">
+                    </div>
+                    <p id="rgb-label">Cor RGB</p>
+                </div>
                 <div class="sub-div">
                     <p>
                         chroma-key:
@@ -88,6 +106,8 @@
                     </button>
                 </div>
                 <button id="invert-btn">Inverter imagem</button>
+                <button id="gray-btn">Escala de cinza</button>
+                <button id="grayPond-btn">Escala de cinza ponderada</button>
                 <button id="sepia-btn">Transformar Sépia</button>
                 <button id="histogram-btn">Gerar Histograma</button>
                 <button id="laplaciano-btn">Aguçamento Laplaciano</button>

@@ -53,17 +53,17 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 - Cálculo da Transformada Discreta de Fourier, exibição do espectro (deslocado) com possibilidade de edição por parte do usuário (ferramenta de desenho que permita riscar com pontos pretos e brancos a imagem do espectro ou pontos em escala de cinza - “pincel suave”) e cálculo da transformada inversa (dadas as modificações editadas pelo usuário no espectro), obtendo a imagem filtrada. ❌
 
 [parte 8]:
-1. **Criação da Ferramenta de Transformação de Cores** ❌
+1. **Criação da Ferramenta de Transformação de Cores** ✅
    - RGB <-> HSV
 
-2. **Algoritmos de Escala de Cinza** ❌
-   - Média Aritmética Simples
+2. **Algoritmos de Escala de Cinza** ✅
+   - Média Aritmética Simples 
    - Média Ponderada
 
 3. **Algoritmo de Negativo**
    - Implementação do efeito negativo em imagens ❌
 [parte 9]:
-1. **Chroma-Key**
+1. **Chroma-Key** ✅
    - Implementar a seleção da 'distância' da cor verde
    - Implementar a substituição da imagem com base na cor verde
 
@@ -73,11 +73,11 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 3. **Equalização de Histograma em Imagens Coloridas** ❌
    - Trabalhar com o espaço de cor HSI
 
-4. **Ajuste de Matiz, Saturação e Brilho** ❌
+4. **Ajuste de Matiz, Saturação e Brilho** ✅
    - Controle de intensidade HSI
 
 5. **Ajuste de Canal** ❌
    - Ajustar C/R, M/G e Y/B
 
-6. **Sépia** ❌
+6. **Sépia** ✅
    - Implementar o efeito sépia (“escala de cinza amarelada”)  

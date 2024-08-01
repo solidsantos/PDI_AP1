@@ -46,6 +46,28 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+    async toGray(req, res){
+        const image = req.body;
+        try{
+            const result = await images.toGray(image.title);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async toGrayW(req, res){
+        const image = req.body;
+        try{
+            const result = await images.toGrayWeighted(image.title);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
     async log(req, res){
         const image = req.body;
         try{
@@ -172,6 +194,17 @@ class ImagesController{
         const image = req.body;
         try{
             const result = await images.sobel(image.title, 'y');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async adjustHsi(req, res){
+        const image = req.body;
+        try{
+            const result = await images.adjustHSI(image.title, image.hCoef, image.sCoef, image.iCoef);
+            res.setHeader('Cache-Control', 'no-cache');
             return res.status(200).json({msg: result});
         }catch(err){
             console.log(err);
