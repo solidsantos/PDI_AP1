@@ -507,7 +507,41 @@ class images {
             return false;
         }
     }
+    async toGray(imagePath){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            let imageResult = [];
+            for(let i=0; i<height; i++){
+                let line = [];
+                for(let j=0; j<width; j++){
+                    let pixel = { r: 0, g: 0, b: 0 };
+                    let mean = ( imageBox[i][j].r + imageBox[i][j].g + imageBox[i][j].b)/3;  
+                    pixel.r = mean;
+                    pixel.g = mean;
+                    pixel.b = mean;
+                    line.push(pixel);
+                }
+                imageResult.push(line);
+            }
+            const res = await this.saveImageBox(imagePath, imageResult);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
 
+    }
+    async toGrayWeighted(imagePath){
+        try{
+            let {imageBox, height, width} = await this.createImageBox(imagePath);
+            if(!this.convertIntoGray(imageBox, height, width)) return false;
+            const res = await this.saveImageBox(imagePath, imageBox);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
     getTypicalMask(n, center) {
         let mask = [];
         for (let i = 0; i < n; i++) {
@@ -528,6 +562,23 @@ class images {
             }
         }
         return mask;
+    }
+    async adjustHSI(imagePath, hCoef, sCoef, iCoef){
+        try{
+            let {imageBox, height, width} = await this.createImageBoxHSI(imagePath);
+            for(let i=0; i<height; i++){
+                for(let j=0; j<width; j++){
+                    imageBox[i][j].h += hCoef; if(imageBox[i][j].h > 360) imageBox[i][j].h = 360; else if(imageBox[i][j].h < 0) imageBox[i][j].h = 0;
+                    imageBox[i][j].s *= sCoef; if(imageBox[i][j].s > 1) imageBox[i][j].s = 1; else if(imageBox[i][j].s < 0) imageBox[i][j].s = 0;
+                    imageBox[i][j].i *= iCoef; if(imageBox[i][j].i > 1) imageBox[i][j].i = 1; else if(imageBox[i][j].i < 0) imageBox[i][j].i = 0;
+                }
+            }
+            const res = await this.saveImageBoxHsi(imagePath, imageBox, height, width);
+            return res;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
     }
     async chroma(imagePath, imagePathBG, {r, g, b}, range){
         try{
@@ -673,11 +724,127 @@ class images {
 
 
     }
-    async saveImageBox(imagePath, imageBox) {
+
+    async createImageBoxHSI(imagePath) {
+        try {
+            const image = await Jimp.read(path.resolve('uploads', imagePath));
+            let height = image.bitmap.height; let width = image.bitmap.width;
+            let imageBox = [];
+            image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
+
+                let r = this.bitmap.data[idx];
+                let g = this.bitmap.data[idx + 1];
+                let b =  this.bitmap.data[idx + 2];
+
+                r = r/255.0;
+                g = g/255.0;
+                b = b/255.0;
+
+                let i = (r+g+b)/3;
+                let s = (i == 0) ? 0 : 1 - (Math.min(r, g, b) / i);
+                let h;
+                if(s==0 || (r==g && r==b)) h = 0;
+                else{
+                    const teta = Math.acos((0.5 * ((r-g) + (r-b)))/Math.sqrt((r-g)**2 + (r-b)*(g-b)));
+                    if(b<=g) h = teta;
+                    else h = 2 * Math.PI - teta;
+                    h = (h*180)/Math.PI;
+                } 
+
+
+                const pixel = {
+                    h: h,
+                    s: s,
+                    i: i
+                };
+                if (!imageBox[y]) {
+                    imageBox[y] = [];
+                }
+                imageBox[y][x] = pixel;
+            })
+            let result = { imageBox, height, width };
+            return result;
+        } catch (err) {
+            console.log(err);
+            return null;
+        }
+
+
+    }
+    createImageColor(height, width, color){
+        let imageBox = [];
+        const pixel = { r: color, g: color, b: color };
+        for(let i=0; i<height; i++){
+            imageBox[i] = [];
+            for(let j=0; j<width; j++){
+                imageBox[i][j] = pixel;
+            }
+        }
+        return imageBox;
+    }
+    async saveImageBox(imagePath, imageBox){
         try {
             const image = await Jimp.read(path.resolve('uploads', imagePath));
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
                 const pixel = imageBox[y][x];
+                this.bitmap.data[idx] = pixel.r;
+                this.bitmap.data[idx + 1] = pixel.g;
+                this.bitmap.data[idx + 2] = pixel.b;
+            })
+            sufix++;
+            await image.writeAsync(`uploads/output${sufix}.jpg`);
+            return `output${sufix}.jpg`;
+        } catch (err) {
+            console.log(err)
+            return false;
+        }
+    }
+
+    async saveImageBoxHsi(imagePath, imageBox, height, width){
+        try {
+            const image = await Jimp.read(path.resolve('uploads', imagePath));
+            ///let resultImage = this.createImageColor(height, width, -1);
+            let resultImage = [];
+            for(let j=0; j<height; j++){
+                resultImage[j] = [];
+                for(let k=0; k<width; k++){
+                    let h = imageBox[j][k].h; let s = imageBox[j][k].s; let i = imageBox[j][k].i;
+                    let r, g, b;
+                    let pixel = {}
+            
+                    h = h * Math.PI / 180;
+
+                    if(h >= 0 && h < 2 * Math.PI / 3){
+                        b = i * (1 - s);
+                        r = i * (1 + (s * Math.cos(h) / Math.cos(Math.PI / 3 - h)));
+                        g = 3 * i - (r + b);
+                    }else if(h >= 2 * Math.PI / 3 && h < 4 * Math.PI / 3) {
+                        h = h - 2 * Math.PI / 3;
+                        r = i * (1 - s);
+                        g = i * (1 + (s * Math.cos(h) / Math.cos(Math.PI / 3 - h)));
+                        b = 3 * i - (r + g);
+                    }else{
+                        h = h - 4 * Math.PI / 3;
+                        g = i * (1 - s);
+                        b = i * (1 + (s * Math.cos(h) / Math.cos(Math.PI / 3 - h)));
+                        r = 3 * i - (g + b);
+                    }
+
+                    r = r*255; if(r>255) r = 255;
+                    g = g*255; if(g>255) g = 255;
+                    b = b*255; if(b>255) b = 255;
+
+                    pixel.r = Math.floor(r);
+                    pixel.g = Math.floor(g);
+                    pixel.b = Math.floor(b);
+
+                    resultImage[j][k] = pixel;
+k
+                }
+            }
+
+            image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
+                const pixel = resultImage[y][x];
                 this.bitmap.data[idx] = pixel.r;
                 this.bitmap.data[idx + 1] = pixel.g;
                 this.bitmap.data[idx + 2] = pixel.b;
@@ -809,6 +976,7 @@ class images {
             return false;
         }
     }
+
     convertIntoGray(imageBox, height, width){
         try{
             for(let i=0; i<height; i++){

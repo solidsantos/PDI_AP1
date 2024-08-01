@@ -10,6 +10,8 @@ router.post('/upImage', imgC.new);
 router.post('/upChroma', imgC.newChroma);
 router.post('/brightness', imgC.brightness);
 router.post('/sepia', imgC.sepia);
+router.post('/gray', imgC.toGray);
+router.post('/grayPond', imgC.toGrayW);
 router.post('/log', imgC.log);
 router.post('/gama', imgC.gama);
 router.post('/histogramGraph', imgC.histogramGraph);
@@ -22,7 +24,8 @@ router.post('/sobelY', imgC.sobelY);
 router.post('/rotate', imgC.rotation);
 router.post('/laplaciano', imgC.laplaciano);
 router.post('/hiboost', imgC.hiboost);
-router.post('/chroma', imgC.chroma)
+router.post('/adjustHsi', imgC.adjustHsi);
+router.post('/chroma', imgC.chroma);
 
 router.post('/encode', imgC.encode);
 router.post('/decode', imgC.decode);
