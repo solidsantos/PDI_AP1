@@ -808,3 +808,112 @@ chromaBtn.addEventListener('click', async()=>{
         console.log(err);
     }
 })
+
+
+/// rotation
+
+const rotateInput = document.getElementById('rotate-input');
+const rotateBtn = document.getElementById('rotate-btn');
+const rotateILBtn = document.getElementById('rotate-IL-btn');
+
+rotateBtn.addEventListener('click', async()=>{
+    let angle = parseInt(rotateInput.value);
+    const body = JSON.stringify({
+        title: imageName,
+        angle
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/spin', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
+rotateILBtn.addEventListener('click', async()=>{
+    let angle = parseInt(rotateInput.value);
+    const body = JSON.stringify({
+        title: imageName,
+        angle
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/spinIL', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
+/// scale
+
+const scaleInput = document.getElementById('scale-input');
+const scaleBtn = document.getElementById('scale-btn');
+const scaleILBtn = document.getElementById('scale-IL-btn');
+
+scaleBtn.addEventListener('click', async()=>{
+    let scale = parseFloat(scaleInput.value);
+    const body = JSON.stringify({
+        title: imageName,
+        scale
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/scale', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
+scaleILBtn.addEventListener('click', async()=>{
+    let scale = parseFloat(scaleInput.value);
+    const body = JSON.stringify({
+        title: imageName,
+        scale
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/scaleIL', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})

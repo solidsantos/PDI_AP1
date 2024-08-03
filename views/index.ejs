@@ -105,6 +105,24 @@
                         Aplicar chroma-key;
                     </button>
                 </div>
+                <div class="sub-div">
+                    <div style="display: flex; align-items: center;">
+                        <p>rotação: </p>
+                        <input style="width: 20%;" type="number" id="rotate-input" value="0">
+                        <p> º</p>
+                    </div>
+                    <button id="rotate-btn">Girar imagem</button>
+                    <button id="rotate-IL-btn">Girar imagem (interpolcao linear)</button>
+                </div>
+                <div class="sub-div">
+                    <div style="display: flex; align-items: center;">
+                        <p>escala: </p>
+                        <input style="width: 20%;" type="number" id="scale-input" value="0">
+                        <p>x</p>
+                    </div>
+                    <button id="scale-btn">Multiplicar</button>
+                    <button id="scale-IL-btn">Multiplicar interpolcao bilinear</button>
+                </div>
                 <button id="invert-btn">Inverter imagem</button>
                 <button id="gray-btn">Escala de cinza</button>
                 <button id="grayPond-btn">Escala de cinza ponderada</button>

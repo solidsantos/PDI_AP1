@@ -26,6 +26,10 @@ router.post('/laplaciano', imgC.laplaciano);
 router.post('/hiboost', imgC.hiboost);
 router.post('/adjustHsi', imgC.adjustHsi);
 router.post('/chroma', imgC.chroma);
+router.post('/spin', imgC.spin);
+router.post('/spinIL', imgC.spinIL);
+router.post('/scale', imgC.scale);
+router.post('/scaleIL', imgC.scaleIL);
 
 router.post('/encode', imgC.encode);
 router.post('/decode', imgC.decode);
