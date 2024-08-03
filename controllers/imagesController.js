@@ -211,6 +211,50 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+    async spin(req, res){
+        const image = req.body;
+        try{
+            const result = await images.spin(image.title, image.angle);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async spinIL(req, res){
+        const image = req.body;
+        try{
+            const result = await images.spinIL(image.title, image.angle);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async scale(req, res){
+        const image = req.body;
+        try{
+            const result = await images.scale(image.title, image.scale);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async scaleIL(req, res){
+        const image = req.body;
+        try{
+            const result = await images.scaleIL(image.title, image.scale);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
     async chroma(req, res){
         const image = req.body;
         try{

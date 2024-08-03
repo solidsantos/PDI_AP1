@@ -43,10 +43,10 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 
 [Parte 6]:
 
-- Escala (vizinho mais próximo) ❌
-- Escala (interpolação linear) ❌
-- Rotação (vizinho mais próximo) ❌
-- Rotação (interpolação linear) ❌
+- Escala (vizinho mais próximo) ✅
+- Escala (interpolação linear) ✅
+- Rotação (vizinho mais próximo) ✅
+- Rotação (interpolação linear) ✅
 
 [parte 7]:
 
