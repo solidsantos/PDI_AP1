@@ -67,7 +67,7 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
    - Implementar a seleção da 'distância' da cor verde
    - Implementar a substituição da imagem com base na cor verde
 
-2. **Histograma** ❌
+2. **Histograma** ✅
    - Implementar histogramas para canais R, G, B e I
 
 3. **Equalização de Histograma em Imagens Coloridas** ❌
