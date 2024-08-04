@@ -287,6 +287,18 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
+
+    async generateHistogram(req, res){
+        const image = req.body
+        try {
+            const result = await images.generateHistogram(image.title);
+            return res.status(200).json({msg: result});
+            
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
     
 }
 

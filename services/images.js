@@ -113,26 +113,26 @@ class images {
             return false;
         }
     }
-    async sepia(imagePath){
-        try{
-            let {imageBox, height, width} = await this.createImageBox(imagePath);
+    async sepia(imagePath) {
+        try {
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
             let imageResult = [];
 
-            if(!this.convertIntoGray(imageBox, height, width)) return false;
-            for(let i=0; i<height; i++){
-                for(let j=0; j<width; j++){
+            if (!this.convertIntoGray(imageBox, height, width)) return false;
+            for (let i = 0; i < height; i++) {
+                for (let j = 0; j < width; j++) {
                     let r = imageBox[i][j].r;
                     let g = imageBox[i][j].g;
                     let b = imageBox[i][j].b;
 
-                    imageBox[i][j].r = 0.393*r + 0.769*g + 0.189*b; if(imageBox[i][j].r > 255) imageBox[i][j].r = 255;
-                    imageBox[i][j].g = 0.349*r + 0.868*g + 0.168*b; if(imageBox[i][j].g > 255) imageBox[i][j].g = 255;
-                    imageBox[i][j].b = 0.272*r + 0.534*g + 0.131*b; if(imageBox[i][j].b > 255) imageBox[i][j].b = 255;
+                    imageBox[i][j].r = 0.393 * r + 0.769 * g + 0.189 * b; if (imageBox[i][j].r > 255) imageBox[i][j].r = 255;
+                    imageBox[i][j].g = 0.349 * r + 0.868 * g + 0.168 * b; if (imageBox[i][j].g > 255) imageBox[i][j].g = 255;
+                    imageBox[i][j].b = 0.272 * r + 0.534 * g + 0.131 * b; if (imageBox[i][j].b > 255) imageBox[i][j].b = 255;
                 }
             }
             const res = await this.saveImageBox(imagePath, imageBox);
             return res;
-        }catch(err){
+        } catch (err) {
             console.log(err)
             return false;
         }
@@ -368,7 +368,7 @@ class images {
             const imageSobel = await Jimp.create(image.bitmap.width, image.bitmap.height);
             const imageSobelX = await Jimp.create(image.bitmap.width, image.bitmap.height);
             const imageSobelY = await Jimp.create(image.bitmap.width, image.bitmap.height);
-    
+
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
                 const pixel = [
                     this.bitmap.data[idx],
@@ -507,15 +507,15 @@ class images {
             return false;
         }
     }
-    async toGray(imagePath){
-        try{
-            let {imageBox, height, width} = await this.createImageBox(imagePath);
+    async toGray(imagePath) {
+        try {
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
             let imageResult = [];
-            for(let i=0; i<height; i++){
+            for (let i = 0; i < height; i++) {
                 let line = [];
-                for(let j=0; j<width; j++){
+                for (let j = 0; j < width; j++) {
                     let pixel = { r: 0, g: 0, b: 0 };
-                    let mean = ( imageBox[i][j].r + imageBox[i][j].g + imageBox[i][j].b)/3;  
+                    let mean = (imageBox[i][j].r + imageBox[i][j].g + imageBox[i][j].b) / 3;
                     pixel.r = mean;
                     pixel.g = mean;
                     pixel.b = mean;
@@ -525,19 +525,19 @@ class images {
             }
             const res = await this.saveImageBox(imagePath, imageResult);
             return res;
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false;
         }
 
     }
-    async toGrayWeighted(imagePath){
-        try{
-            let {imageBox, height, width} = await this.createImageBox(imagePath);
-            if(!this.convertIntoGray(imageBox, height, width)) return false;
+    async toGrayWeighted(imagePath) {
+        try {
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
+            if (!this.convertIntoGray(imageBox, height, width)) return false;
             const res = await this.saveImageBox(imagePath, imageBox);
             return res;
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false;
         }
@@ -563,36 +563,36 @@ class images {
         }
         return mask;
     }
-    async adjustHSI(imagePath, hCoef, sCoef, iCoef){
-        try{
-            let {imageBox, height, width} = await this.createImageBoxHSI(imagePath);
-            for(let i=0; i<height; i++){
-                for(let j=0; j<width; j++){
-                    imageBox[i][j].h += hCoef; if(imageBox[i][j].h > 360) imageBox[i][j].h = 360; else if(imageBox[i][j].h < 0) imageBox[i][j].h = 0;
-                    imageBox[i][j].s *= sCoef; if(imageBox[i][j].s > 1) imageBox[i][j].s = 1; else if(imageBox[i][j].s < 0) imageBox[i][j].s = 0;
-                    imageBox[i][j].i *= iCoef; if(imageBox[i][j].i > 1) imageBox[i][j].i = 1; else if(imageBox[i][j].i < 0) imageBox[i][j].i = 0;
+    async adjustHSI(imagePath, hCoef, sCoef, iCoef) {
+        try {
+            let { imageBox, height, width } = await this.createImageBoxHSI(imagePath);
+            for (let i = 0; i < height; i++) {
+                for (let j = 0; j < width; j++) {
+                    imageBox[i][j].h += hCoef; if (imageBox[i][j].h > 360) imageBox[i][j].h = 360; else if (imageBox[i][j].h < 0) imageBox[i][j].h = 0;
+                    imageBox[i][j].s *= sCoef; if (imageBox[i][j].s > 1) imageBox[i][j].s = 1; else if (imageBox[i][j].s < 0) imageBox[i][j].s = 0;
+                    imageBox[i][j].i *= iCoef; if (imageBox[i][j].i > 1) imageBox[i][j].i = 1; else if (imageBox[i][j].i < 0) imageBox[i][j].i = 0;
                 }
             }
             const res = await this.saveImageBoxHsi(imagePath, imageBox, height, width);
             return res;
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false;
         }
     }
-    async chroma(imagePath, imagePathBG, {r, g, b}, range){
-        try{
-            let {imageBox, height, width} = await this.createImageBox(imagePath);
+    async chroma(imagePath, imagePathBG, { r, g, b }, range) {
+        try {
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
             let result = await this.createImageBox(imagePathBG);
-            let {bgImageBox, bgHeight, bgWidth} = {}
+            let { bgImageBox, bgHeight, bgWidth } = {}
             bgImageBox = result.imageBox;
             bgHeight = result.height;
             bgWidth = result.width;
-            console.log({ bgHeight, bgWidth})
-            for(let i=0; i<height; i++){
-                for(let j=0; j<width; j++){
-                    let distance = Math.sqrt( (r - imageBox[i][j].r)**2 + (g - imageBox[i][j].g)**2 + (b - imageBox[i][j].b)**2 );
-                    if(distance <= range && i< bgHeight && j < bgWidth){
+            console.log({ bgHeight, bgWidth })
+            for (let i = 0; i < height; i++) {
+                for (let j = 0; j < width; j++) {
+                    let distance = Math.sqrt((r - imageBox[i][j].r) ** 2 + (g - imageBox[i][j].g) ** 2 + (b - imageBox[i][j].b) ** 2);
+                    if (distance <= range && i < bgHeight && j < bgWidth) {
                         imageBox[i][j].r = bgImageBox[i][j].r;
                         imageBox[i][j].g = bgImageBox[i][j].g;
                         imageBox[i][j].b = bgImageBox[i][j].b;
@@ -602,7 +602,7 @@ class images {
 
             const res = await this.saveImageBox(imagePath, imageBox);
             return res;
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false
         }
@@ -698,27 +698,27 @@ class images {
             return result;
         }
     }
-    async spin(imagePath, angle){
-        try{
-            let {imageBox, height, width} = await this.createImageBox(imagePath);
-            let zRad = angle * (Math.PI)/180;
-            let diag = Math.sqrt( Math.pow(height, 2) + Math.pow(width, 2));
+    async spin(imagePath, angle) {
+        try {
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
+            let zRad = angle * (Math.PI) / 180;
+            let diag = Math.sqrt(Math.pow(height, 2) + Math.pow(width, 2));
             diag = Math.floor(diag)
-//            let maxHei = diag; let maxWid = diag;
+            //            let maxHei = diag; let maxWid = diag;
             let maxHei = Math.abs(width * Math.sin(zRad)) + Math.abs(height * Math.cos(zRad));
             let maxWid = Math.abs(width * Math.cos(zRad)) + Math.abs(height * Math.sin(zRad));
             maxHei = Math.ceil(maxHei);
             maxWid = Math.ceil(maxWid);
 
             console.log(maxHei, maxWid);
-            
+
             let result = []
-            for(let i=0; i<maxHei; i++){
+            for (let i = 0; i < maxHei; i++) {
                 result[i] = []
-                for(let j=0; j<maxWid; j++){
-                    let pixel = {r: 255, g: 255, b: 255};
+                for (let j = 0; j < maxWid; j++) {
+                    let pixel = { r: 255, g: 255, b: 255 };
                     let x = Math.round((j - maxWid / 2) * Math.cos(-zRad) - (i - maxHei / 2) * Math.sin(-zRad) + width / 2);
-                    let y = Math.round((j - maxWid / 2) * Math.sin(-zRad) + (i - maxHei / 2) * Math.cos(-zRad) + height / 2);    
+                    let y = Math.round((j - maxWid / 2) * Math.sin(-zRad) + (i - maxHei / 2) * Math.cos(-zRad) + height / 2);
                     if (x >= 0 && x < width && y >= 0 && y < height) {
                         pixel = imageBox[y][x];
                     }
@@ -731,7 +731,7 @@ class images {
 
             const image = await Jimp.read(path.resolve('uploads', 'new-img.png'));
 
-            
+
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
                 const pixel = result[y][x];
                 this.bitmap.data[idx] = pixel.r;
@@ -741,59 +741,59 @@ class images {
             sufix++;
             await image.writeAsync(`uploads/output${sufix}.jpg`);
             return `output${sufix}.jpg`;
-        }catch(err){
+        } catch (err) {
             console.log('erro na excução do giro de imagem:');
             console.log(err);
             return false;
         }
     }
     async spinIL(imagePath, angle) {
-        try{
-            let {imageBox, height, width} = await this.createImageBox(imagePath);
+        try {
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
             let zRad = angle * (Math.PI) / 180;
             let maxHei = Math.abs(width * Math.sin(zRad)) + Math.abs(height * Math.cos(zRad));
             let maxWid = Math.abs(width * Math.cos(zRad)) + Math.abs(height * Math.sin(zRad));
-            let centerX = width/2;
-            let centerY = height/2;
-            let newCenterX = maxWid/2;
-            let newCenterY = maxHei/2;
-    
+            let centerX = width / 2;
+            let centerY = height / 2;
+            let newCenterX = maxWid / 2;
+            let newCenterY = maxHei / 2;
+
             let result = [];
             for (let i = 0; i < Math.ceil(maxHei); i++) {
                 result[i] = [];
                 for (let j = 0; j < Math.ceil(maxWid); j++) {
                     let origX = (j - newCenterX) * Math.cos(-zRad) - (i - newCenterY) * Math.sin(-zRad) + centerX;
                     let origY = (j - newCenterX) * Math.sin(-zRad) + (i - newCenterY) * Math.cos(-zRad) + centerY;
-    
+
                     let x1 = Math.floor(origX);
                     let y1 = Math.floor(origY);
                     let x2 = Math.ceil(origX);
                     let y2 = Math.ceil(origY);
-    
+
                     let Q11 = (x1 >= 0 && y1 >= 0 && x1 < width && y1 < height) ? imageBox[y1][x1] : { r: 255, g: 255, b: 255 };
                     let Q21 = (x2 >= 0 && y1 >= 0 && x2 < width && y1 < height) ? imageBox[y1][x2] : { r: 255, g: 255, b: 255 };
                     let Q12 = (x1 >= 0 && y2 >= 0 && x1 < width && y2 < height) ? imageBox[y2][x1] : { r: 255, g: 255, b: 255 };
                     let Q22 = (x2 >= 0 && y2 >= 0 && x2 < width && y2 < height) ? imageBox[y2][x2] : { r: 255, g: 255, b: 255 };
-    
+
                     let dx = origX - x1;
                     let dy = origY - y1;
-    
+
                     let pixel = {
                         r: Math.round((Q11.r * (1 - dx) * (1 - dy)) + (Q21.r * dx * (1 - dy)) + (Q12.r * (1 - dx) * dy) + (Q22.r * dx * dy)),
                         g: Math.round((Q11.g * (1 - dx) * (1 - dy)) + (Q21.g * dx * (1 - dy)) + (Q12.g * (1 - dx) * dy) + (Q22.g * dx * dy)),
                         b: Math.round((Q11.b * (1 - dx) * (1 - dy)) + (Q21.b * dx * (1 - dy)) + (Q12.b * (1 - dx) * dy) + (Q22.b * dx * dy))
                     };
-    
+
                     result[i][j] = pixel;
                 }
             }
-    
+
             const newImage = await new Jimp(maxWid, maxHei, 0xFFFFFFFF);
             await newImage.writeAsync('./uploads/new-img.png');
 
             const image = await Jimp.read(path.resolve('uploads', 'new-img.png'));
 
-            
+
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
                 const pixel = result[y][x];
                 this.bitmap.data[idx] = pixel.r;
@@ -803,28 +803,28 @@ class images {
             sufix++;
             await image.writeAsync(`uploads/output${sufix}.jpg`);
             return `output${sufix}.jpg`;
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false;
         }
     }
     async scale(imagePath, scale) {
-        try{
-            let {imageBox, height, width} = await this.createImageBox(imagePath);
+        try {
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
             console.log(scale);
             let newWidth = Math.floor(width * scale);
             let newHeight = Math.floor(height * scale);
-    
+
             let result = [];
             for (let i = 0; i < newHeight; i++) {
                 result[i] = [];
                 for (let j = 0; j < newWidth; j++) {
                     let origX = Math.floor(j / scale);
                     let origY = Math.floor(i / scale);
-    
+
                     if (origX >= 0 && origX < width && origY >= 0 && origY < height) {
                         result[i][j] = imageBox[origY][origX];
-                    }else{
+                    } else {
                         result[i][j] = { r: 255, g: 255, b: 255 };
                     }
                 }
@@ -832,9 +832,9 @@ class images {
             console.log(newWidth, newHeight);
             const newImage = await new Jimp(newWidth, newHeight, 0xFFFFFFFF);
             await newImage.writeAsync('./uploads/new-img.png');
-            
+
             const image = await Jimp.read(path.resolve('uploads', 'new-img.png'));
-    
+
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
                 const pixel = result[y][x];
                 this.bitmap.data[idx] = pixel.r;
@@ -844,17 +844,17 @@ class images {
             sufix++;
             await image.writeAsync(`uploads/output${sufix}.jpg`);
             return `output${sufix}.jpg`;
-    
-        }catch(err){
+
+        } catch (err) {
             console.log(err);
             return false;
         }
     }
-    
-    async scaleIL(imagePath, scale){
-        try{
-            let {imageBox, height, width} = await this.createImageBox(imagePath);
-            
+
+    async scaleIL(imagePath, scale) {
+        try {
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
+
             let newWidth = Math.floor(width * scale);
             let newHeight = Math.floor(height * scale);
 
@@ -865,26 +865,26 @@ class images {
                 for (let j = 0; j < newWidth; j++) {
                     let origX = j / scale;
                     let origY = i / scale;
-    
+
                     let x1 = Math.floor(origX);
                     let y1 = Math.floor(origY);
                     let x2 = Math.ceil(origX);
                     let y2 = Math.ceil(origY);
-    
+
                     let Q11 = (x1 >= 0 && y1 >= 0 && x1 < width && y1 < height) ? imageBox[y1][x1] : { r: 255, g: 255, b: 255 };
                     let Q21 = (x2 >= 0 && y1 >= 0 && x2 < width && y1 < height) ? imageBox[y1][x2] : { r: 255, g: 255, b: 255 };
                     let Q12 = (x1 >= 0 && y2 >= 0 && x1 < width && y2 < height) ? imageBox[y2][x1] : { r: 255, g: 255, b: 255 };
                     let Q22 = (x2 >= 0 && y2 >= 0 && x2 < width && y2 < height) ? imageBox[y2][x2] : { r: 255, g: 255, b: 255 };
-    
+
                     let dx = origX - x1;
                     let dy = origY - y1;
-    
+
                     let pixel = {
                         r: Math.round((Q11.r * (1 - dx) * (1 - dy)) + (Q21.r * dx * (1 - dy)) + (Q12.r * (1 - dx) * dy) + (Q22.r * dx * dy)),
                         g: Math.round((Q11.g * (1 - dx) * (1 - dy)) + (Q21.g * dx * (1 - dy)) + (Q12.g * (1 - dx) * dy) + (Q22.g * dx * dy)),
                         b: Math.round((Q11.b * (1 - dx) * (1 - dy)) + (Q21.b * dx * (1 - dy)) + (Q12.b * (1 - dx) * dy) + (Q22.b * dx * dy))
                     };
-    
+
                     result[i][j] = pixel;
                 }
             }
@@ -892,7 +892,7 @@ class images {
             const newImage = await new Jimp(newWidth, newHeight, 0xFFFFFFFF);
             await newImage.writeAsync('./uploads/new-img.png');
             const image = await Jimp.read(path.resolve('uploads', 'new-img.png'));
-    
+
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
                 const pixel = result[y][x];
                 this.bitmap.data[idx] = pixel.r;
@@ -902,12 +902,12 @@ class images {
             sufix++;
             await image.writeAsync(`uploads/output${sufix}.jpg`);
             return `output${sufix}.jpg`;
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false;
         }
     }
-    
+
     async createImageBox(imagePath) {
         try {
             const image = await Jimp.read(path.resolve('uploads', imagePath));
@@ -944,22 +944,22 @@ class images {
 
                 let r = this.bitmap.data[idx];
                 let g = this.bitmap.data[idx + 1];
-                let b =  this.bitmap.data[idx + 2];
+                let b = this.bitmap.data[idx + 2];
 
-                r = r/255.0;
-                g = g/255.0;
-                b = b/255.0;
+                r = r / 255.0;
+                g = g / 255.0;
+                b = b / 255.0;
 
-                let i = (r+g+b)/3;
+                let i = (r + g + b) / 3;
                 let s = (i == 0) ? 0 : 1 - (Math.min(r, g, b) / i);
                 let h;
-                if(s==0 || (r==g && r==b)) h = 0;
-                else{
-                    const teta = Math.acos((0.5 * ((r-g) + (r-b)))/Math.sqrt((r-g)**2 + (r-b)*(g-b)));
-                    if(b<=g) h = teta;
+                if (s == 0 || (r == g && r == b)) h = 0;
+                else {
+                    const teta = Math.acos((0.5 * ((r - g) + (r - b))) / Math.sqrt((r - g) ** 2 + (r - b) * (g - b)));
+                    if (b <= g) h = teta;
                     else h = 2 * Math.PI - teta;
-                    h = (h*180)/Math.PI;
-                } 
+                    h = (h * 180) / Math.PI;
+                }
 
 
                 const pixel = {
@@ -981,18 +981,18 @@ class images {
 
 
     }
-    createImageColor(height, width, color){
+    createImageColor(height, width, color) {
         let imageBox = [];
         const pixel = { r: color, g: color, b: color };
-        for(let i=0; i<height; i++){
+        for (let i = 0; i < height; i++) {
             imageBox[i] = [];
-            for(let j=0; j<width; j++){
+            for (let j = 0; j < width; j++) {
                 imageBox[i][j] = pixel;
             }
         }
         return imageBox;
     }
-    async saveImageBox(imagePath, imageBox){
+    async saveImageBox(imagePath, imageBox) {
         try {
             const image = await Jimp.read(path.resolve('uploads', imagePath));
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
@@ -1011,46 +1011,46 @@ class images {
         }
     }
 
-    async saveImageBoxHsi(imagePath, imageBox, height, width){
+    async saveImageBoxHsi(imagePath, imageBox, height, width) {
         try {
             const image = await Jimp.read(path.resolve('uploads', imagePath));
             ///let resultImage = this.createImageColor(height, width, -1);
             let resultImage = [];
-            for(let j=0; j<height; j++){
+            for (let j = 0; j < height; j++) {
                 resultImage[j] = [];
-                for(let k=0; k<width; k++){
+                for (let k = 0; k < width; k++) {
                     let h = imageBox[j][k].h; let s = imageBox[j][k].s; let i = imageBox[j][k].i;
                     let r, g, b;
                     let pixel = {}
-            
+
                     h = h * Math.PI / 180;
 
-                    if(h >= 0 && h < 2 * Math.PI / 3){
+                    if (h >= 0 && h < 2 * Math.PI / 3) {
                         b = i * (1 - s);
                         r = i * (1 + (s * Math.cos(h) / Math.cos(Math.PI / 3 - h)));
                         g = 3 * i - (r + b);
-                    }else if(h >= 2 * Math.PI / 3 && h < 4 * Math.PI / 3) {
+                    } else if (h >= 2 * Math.PI / 3 && h < 4 * Math.PI / 3) {
                         h = h - 2 * Math.PI / 3;
                         r = i * (1 - s);
                         g = i * (1 + (s * Math.cos(h) / Math.cos(Math.PI / 3 - h)));
                         b = 3 * i - (r + g);
-                    }else{
+                    } else {
                         h = h - 4 * Math.PI / 3;
                         g = i * (1 - s);
                         b = i * (1 + (s * Math.cos(h) / Math.cos(Math.PI / 3 - h)));
                         r = 3 * i - (g + b);
                     }
 
-                    r = r*255; if(r>255) r = 255;
-                    g = g*255; if(g>255) g = 255;
-                    b = b*255; if(b>255) b = 255;
+                    r = r * 255; if (r > 255) r = 255;
+                    g = g * 255; if (g > 255) g = 255;
+                    b = b * 255; if (b > 255) b = 255;
 
                     pixel.r = Math.floor(r);
                     pixel.g = Math.floor(g);
                     pixel.b = Math.floor(b);
 
                     resultImage[j][k] = pixel;
-k
+                    k
                 }
             }
 
@@ -1096,7 +1096,7 @@ k
             }
 
             textBinary.push(textDelimiter);
-     
+
             const modifiedSequence = binaryImage.value.map((byte) => {
                 if (counter < textBinary.length) {
                     if (sliceIndex == 0) {
@@ -1188,21 +1188,76 @@ k
         }
     }
 
-    convertIntoGray(imageBox, height, width){
-        try{
-            for(let i=0; i<height; i++){
-                for(let j=0; j<width; j++){
-                    let gray = 0.299 * imageBox[i][j].r  + 0.587 * imageBox[i][j].g + 0.114 * imageBox[i][j].b;
+    convertIntoGray(imageBox, height, width) {
+        try {
+            for (let i = 0; i < height; i++) {
+                for (let j = 0; j < width; j++) {
+                    let gray = 0.299 * imageBox[i][j].r + 0.587 * imageBox[i][j].g + 0.114 * imageBox[i][j].b;
                     imageBox[i][j].r = gray;
                     imageBox[i][j].g = gray;
                     imageBox[i][j].b = gray;
                 }
             }
             return true;
-        }catch(err){
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+    }
+    async generateHistogram(imagePath) {
+        try {
+            console.log(imagePath);
+            const image = await Jimp.read(path.resolve('uploads', imagePath));
+            const width = image.bitmap.width;
+            const height = image.bitmap.height;
+
+            // Inicializar os arrays para os histogramas
+            const histR = new Array(256).fill(0);
+            const histG = new Array(256).fill(0);
+            const histB = new Array(256).fill(0);
+            const histI = new Array(256).fill(0);
+
+            // Preencher os histogramas
+            image.scan(0, 0, width, height, function (x, y, idx) {
+                const r = this.bitmap.data[idx];
+                const g = this.bitmap.data[idx + 1];
+                const b = this.bitmap.data[idx + 2];
+                const i = (r + g + b) / 3;
+
+                histR[r]++;
+                histG[g]++;
+                histB[b]++;
+                histI[Math.round(i)]++;
+            });
+
+            // Função para criar uma imagem de histograma
+            async function createHistogramImage(hist, color, fileName) {
+                const histImage = new Jimp(256, 100, 0xffffffff);
+                const maxCount = Math.max(...hist);
+
+                hist.forEach((count, i) => {
+                    const barHeight = Math.round((count / maxCount) * 100);
+                    for (let j = 0; j < barHeight; j++) {
+                        histImage.setPixelColor(Jimp.cssColorToHex(color), i, 99 - j);
+                    }
+                });
+
+                await histImage.writeAsync(`uploads/${fileName}`, (err) => {
+                    if (err) throw err;
+                });
+            }
+
+            // Criar e salvar as imagens de histograma
+            await createHistogramImage(histR, 'red', 'histogramR.png');
+            await createHistogramImage(histG, 'green', 'histogramG.png');
+            await createHistogramImage(histB, 'blue', 'histogramB.png');
+            await createHistogramImage(histI, 'gray', 'histogramI.png');
+
+        } catch (err) {
             console.log(err);
             return false;
         }
     }
 }
 module.exports = new images
+
