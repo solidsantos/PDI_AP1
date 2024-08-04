@@ -13,7 +13,6 @@ class ImagesController{
             return res.status(200).json({link: filename});
         });
     }
-
     async newChroma(req, res){
         upload.single('image')(req, res, (err) => {
             const filename = req.file.filename;
@@ -23,7 +22,6 @@ class ImagesController{
             return res.status(200).json({link: filename});
         });
     }
-
     async brightness(req, res){
         const image = req.body;
         try{
@@ -101,7 +99,6 @@ class ImagesController{
             return res.status(500).json({msg: 'erro interno do servidor!'});
         }
     }
-
     async binary(req, res){
         const image = req.body;
         try{
@@ -118,6 +115,28 @@ class ImagesController{
         const image = req.body;
         try{
             const result = await images.meanSmoothing(image.title, image.coef);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async gaussSmoothing(req, res){
+        const image = req.body;
+        try{
+            const result = await images.gaussSmoothing(image.title, image.coef);
+            res.setHeader('Cache-Control', 'no-cache');
+            return res.status(200).json({msg: result});
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({msg: 'erro interno do servidor!'});
+        }
+    }
+    async filterOpen(req, res){
+        const image = req.body;
+        try{
+            const result = await images.filterOpen(image.title, image.coef, image.filter);
             res.setHeader('Cache-Control', 'no-cache');
             return res.status(200).json({msg: result});
         }catch(err){

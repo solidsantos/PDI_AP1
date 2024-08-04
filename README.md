@@ -26,9 +26,9 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 [Parte 3]:
 
 - Limiarização (Binarização) ✅
-- Aplicação de filtro genérico por convolução ❌
+- Aplicação de filtro genérico por convolução ✅
 - Filtro de suavização da média ✅
-- Filtro gaussiano ❌
+- Filtro gaussiano ✅
 
 [Parte 4]:
 

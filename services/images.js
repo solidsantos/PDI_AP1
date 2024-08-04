@@ -478,7 +478,7 @@ class images {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             let imageResult = [];
             let center = Math.floor(coef / 2);
-            let mask = getTypicalMask(coef, center);
+            let mask = this.getTypicalMask(coef, center);
 
             for (let i = 0; i < height; i++) {
                 let line = [];
@@ -503,6 +503,58 @@ class images {
             const res = await this.saveImageBox(imagePath, imageResult);
             return res;
         } catch (err) {
+            console.log(err);
+            return false;
+        }
+    }
+    async filterOpen(imagePath, coef, filter){
+        try{
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
+            let imageResult = [];
+            let center = Math.floor(coef / 2);
+            const numbers = filter.split(',').map(Number);
+
+            if(numbers.length < coef * coef){
+                throw new Error('Números insuficientes para preencher a matriz.');
+                return false;
+            }
+            const mask = [];
+            for(let i = 0; i < coef; i++){
+                const row = [];
+                for (let j = 0; j < coef; j++) {
+                    row.push(numbers[i * coef + j]);
+                }
+                mask.push(row);
+            }
+
+            const maskSum = numbers.reduce((sum, val) => sum + val, 0);
+            const normalize = maskSum !== 0 ? maskSum : 1;
+
+            for(let i = 0; i < height; i++){
+                let line = [];
+                for (let j = 0; j < width; j++) {
+                    let pixel = { r: 0, g: 0, b: 0 };
+                    for (let m = 0; m < coef; m++) {
+                        for (let n = 0; n < coef; n++) {
+                            let rowIndex = i - center + m;
+                            let colIndex = j - center + n;
+                            if (rowIndex >= 0 && rowIndex < height && colIndex >= 0 && colIndex < width) {
+                                pixel.r += imageBox[rowIndex][colIndex].r * mask[m][n];
+                                pixel.g += imageBox[rowIndex][colIndex].g * mask[m][n];
+                                pixel.b += imageBox[rowIndex][colIndex].b * mask[m][n];
+                            }
+                        }
+                    }
+                    pixel.r = Math.min(Math.max(Math.round(pixel.r / normalize), 0), 255);
+                    pixel.g = Math.min(Math.max(Math.round(pixel.g / normalize), 0), 255);
+                    pixel.b = Math.min(Math.max(Math.round(pixel.b / normalize), 0), 255);
+                    line.push(pixel);
+                }
+                imageResult.push(line);
+            }
+            const res = await this.saveImageBox(imagePath, imageResult);
+            return res;
+        }catch(err){
             console.log(err);
             return false;
         }
@@ -849,8 +901,7 @@ class images {
             console.log(err);
             return false;
         }
-    }
-    
+    } 
     async scaleIL(imagePath, scale){
         try{
             let {imageBox, height, width} = await this.createImageBox(imagePath);
@@ -907,7 +958,6 @@ class images {
             return false;
         }
     }
-    
     async createImageBox(imagePath) {
         try {
             const image = await Jimp.read(path.resolve('uploads', imagePath));
@@ -934,7 +984,6 @@ class images {
 
 
     }
-
     async createImageBoxHSI(imagePath) {
         try {
             const image = await Jimp.read(path.resolve('uploads', imagePath));

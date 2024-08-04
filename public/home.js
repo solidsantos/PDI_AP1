@@ -419,7 +419,7 @@ gaussBtn.addEventListener('click', async () => {
         }
     };
     try {
-        const res = await fetch('http://localhost:8080/gauss', fetchOptions);
+        const res = await fetch('http://localhost:8080/gaussSmoothing', fetchOptions);
         if (res.status == 200) {
             const body = await res.json()
             alterateImage(body.msg);
@@ -428,6 +428,45 @@ gaussBtn.addEventListener('click', async () => {
         console.log(err);
     }
 })
+
+
+/// Filtro genérico
+const filterRangeG = document.getElementById('filter-range2');
+const filterText = document.getElementById('filter-text');
+const filterOpenBtn = document.getElementById('filter-open-btn');
+var filterCoefOpen = 0;
+
+filterRangeG.addEventListener('change', () => {
+    const filterValueG = document.getElementById('filter-value2');
+    filterCoefOpen = 2 * parseInt(filterRangeG.value) - 1;
+    filterValueG.innerText = filterCoefOpen;
+})
+
+filterOpenBtn.addEventListener('click', async()=>{
+    const filter = filterText.value;
+    const body = JSON.stringify({
+        title: imageName,
+        coef: parseInt(filterCoefOpen),
+        filter: filter
+    });
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/filterOpen', fetchOptions);
+        if (res.status == 200) {
+            const body = await res.json()
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})
+
 
 /// Rotação
 const degreeInput = document.getElementById('rotation-input');

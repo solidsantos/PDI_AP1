@@ -17,6 +17,8 @@ router.post('/gama', imgC.gama);
 router.post('/histogramGraph', imgC.histogramGraph);
 router.post('/binary', imgC.binary);
 router.post('/meanSmoothing', imgC.meanSmoothing);
+router.post('/gaussSmoothing', imgC.gaussSmoothing);
+router.post('/filterOpen', imgC.filterOpen);
 router.post('/invert', imgC.invert);
 router.post('/sobel', imgC.sobel);
 router.post('/sobelX', imgC.sobelX);
