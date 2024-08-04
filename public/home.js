@@ -917,3 +917,25 @@ scaleILBtn.addEventListener('click', async()=>{
         console.log(err);
     }
 })
+
+const histogramButton = document.getElementById('btn-histogram');
+histogramButton.addEventListener('click', async () => {
+    const body = JSON.stringify({
+        title: imageName,
+    });
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try {
+        const res = await fetch('http://localhost:8080/generatehistogram', fetchOptions);
+        if (res.status == 200) {
+            const body = await res.json();
+        }
+    } catch (err) {
+        console.log(err);
+    }
+});

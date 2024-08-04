@@ -33,4 +33,6 @@ router.post('/scaleIL', imgC.scaleIL);
 
 router.post('/encode', imgC.encode);
 router.post('/decode', imgC.decode);
+
+router.post('/generatehistogram', imgC.generateHistogram)
 module.exports = router;
