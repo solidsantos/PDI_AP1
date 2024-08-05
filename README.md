@@ -70,7 +70,7 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 2. **Histograma** ✅
    - Implementar histogramas para canais R, G, B e I
 
-3. **Equalização de Histograma em Imagens Coloridas** ❌
+3. **Equalização de Histograma em Imagens Coloridas** ✅
    - Trabalhar com o espaço de cor HSI
 
 4. **Ajuste de Matiz, Saturação e Brilho** ✅

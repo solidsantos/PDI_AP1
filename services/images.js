@@ -3,6 +3,80 @@ const Jimp = require('jimp');
 const { text } = require('body-parser');
 let sufix = 0;
 
+function rgbToHsi(r, g, b) {
+    r = r / 255;
+    g = g / 255;
+    b = b / 255;
+
+    const intensity = (r + g + b) / 3;
+
+    let min = Math.min(r, g, b);
+    let saturation = 1 - min / intensity;
+    if (intensity === 0) saturation = 0;
+
+    let hue = 0;
+    if (saturation !== 0) {
+        hue = Math.acos(((r - g) + (r - b)) / (2 * Math.sqrt((r - g) ** 2 + (r - b) * (g - b))));
+        if (b > g) {
+            hue = 2 * Math.PI - hue;
+        }
+    }
+    hue = hue / (2 * Math.PI);
+
+    return [hue, saturation, intensity];
+}
+
+function hsiToRgb(h, s, i) {
+    h = h * 2 * Math.PI;
+
+    let r, g, b;
+
+    if (h < 2 * Math.PI / 3) {
+        b = i * (1 - s);
+        r = i * (1 + s * Math.cos(h) / Math.cos(Math.PI / 3 - h));
+        g = 3 * i - (r + b);
+    } else if (h < 4 * Math.PI / 3) {
+        h = h - 2 * Math.PI / 3;
+        r = i * (1 - s);
+        g = i * (1 + s * Math.cos(h) / Math.cos(Math.PI / 3 - h));
+        b = 3 * i - (r + g);
+    } else {
+        h = h - 4 * Math.PI / 3;
+        g = i * (1 - s);
+        b = i * (1 + s * Math.cos(h) / Math.cos(Math.PI / 3 - h));
+        r = 3 * i - (g + b);
+    }
+
+    r = Math.max(0, Math.min(1, r));
+    g = Math.max(0, Math.min(1, g));
+    b = Math.max(0, Math.min(1, b));
+
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+function equalizeHistogram(intensityArray) {
+    const histogram = new Array(256).fill(0);
+    intensityArray.forEach(i => {
+        histogram[Math.round(i * 255)]++;
+    });
+
+    const cdf = new Array(256).fill(0);
+    cdf[0] = histogram[0];
+    for (let i = 1; i < 256; i++) {
+        cdf[i] = cdf[i - 1] + histogram[i];
+    }
+
+    const cdfMin = cdf.find(value => value !== 0);
+    const totalPixels = intensityArray.length;
+    const scaleFactor = 255 / (totalPixels - cdfMin);
+
+    const equalizedArray = intensityArray.map(i => {
+        const cdfValue = cdf[Math.round(i * 255)];
+        return (cdfValue - cdfMin) * scaleFactor / 255;
+    });
+
+    return equalizedArray;
+}
 
 function binaryToAscii(binaryString) {
     const decimalValue = parseInt(binaryString, 2);
@@ -506,19 +580,19 @@ class images {
             return false;
         }
     }
-    async filterOpen(imagePath, coef, filter){
-        try{
+    async filterOpen(imagePath, coef, filter) {
+        try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             let imageResult = [];
             let center = Math.floor(coef / 2);
             const numbers = filter.split(',').map(Number);
 
-            if(numbers.length < coef * coef){
+            if (numbers.length < coef * coef) {
                 throw new Error('Números insuficientes para preencher a matriz.');
                 return false;
             }
             const mask = [];
-            for(let i = 0; i < coef; i++){
+            for (let i = 0; i < coef; i++) {
                 const row = [];
                 for (let j = 0; j < coef; j++) {
                     row.push(numbers[i * coef + j]);
@@ -529,7 +603,7 @@ class images {
             const maskSum = numbers.reduce((sum, val) => sum + val, 0);
             const normalize = maskSum !== 0 ? maskSum : 1;
 
-            for(let i = 0; i < height; i++){
+            for (let i = 0; i < height; i++) {
                 let line = [];
                 for (let j = 0; j < width; j++) {
                     let pixel = { r: 0, g: 0, b: 0 };
@@ -553,14 +627,14 @@ class images {
             }
             const res = await this.saveImageBox(imagePath, imageResult);
             return res;
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false;
         }
     }
-    async toGray(imagePath){
-        try{
-            let {imageBox, height, width} = await this.createImageBox(imagePath);
+    async toGray(imagePath) {
+        try {
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
             let imageResult = [];
             for (let i = 0; i < height; i++) {
                 let line = [];
@@ -582,7 +656,7 @@ class images {
         }
 
     }
-    async toGrayWeighted(imagePath){
+    async toGrayWeighted(imagePath) {
         try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             if (!this.convertIntoGray(imageBox, height, width)) return false;
@@ -593,7 +667,7 @@ class images {
             return false;
         }
     }
-    getTypicalMask(n, center){
+    getTypicalMask(n, center) {
         let mask = [];
         for (let i = 0; i < n; i++) {
             mask[i] = new Array(n).fill(0);
@@ -614,7 +688,7 @@ class images {
         }
         return mask;
     }
-    async adjustHSI(imagePath, hCoef, sCoef, iCoef){
+    async adjustHSI(imagePath, hCoef, sCoef, iCoef) {
         try {
             let { imageBox, height, width } = await this.createImageBoxHSI(imagePath);
             for (let i = 0; i < height; i++) {
@@ -631,7 +705,7 @@ class images {
             return false;
         }
     }
-    async chroma(imagePath, imagePathBG, { r, g, b }, range){
+    async chroma(imagePath, imagePathBG, { r, g, b }, range) {
         try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             let result = await this.createImageBox(imagePathBG);
@@ -749,7 +823,7 @@ class images {
             return result;
         }
     }
-    async spin(imagePath, angle){
+    async spin(imagePath, angle) {
         try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             let zRad = angle * (Math.PI) / 180;
@@ -798,7 +872,7 @@ class images {
             return false;
         }
     }
-    async spinIL(imagePath, angle){
+    async spinIL(imagePath, angle) {
         try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             let zRad = angle * (Math.PI) / 180;
@@ -859,7 +933,7 @@ class images {
             return false;
         }
     }
-    async scale(imagePath, scale){
+    async scale(imagePath, scale) {
         try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             console.log(scale);
@@ -900,11 +974,11 @@ class images {
             console.log(err);
             return false;
         }
-    } 
-    async scaleIL(imagePath, scale){
-        try{
-            let {imageBox, height, width} = await this.createImageBox(imagePath);
-            
+    }
+    async scaleIL(imagePath, scale) {
+        try {
+            let { imageBox, height, width } = await this.createImageBox(imagePath);
+
             let newWidth = Math.floor(width * scale);
             let newHeight = Math.floor(height * scale);
 
@@ -957,12 +1031,12 @@ class images {
             return false;
         }
     }
-    async cmy(imagePath, c, m, y){
-        let {imageBox, height, width} = await this.createImageBox(imagePath);
+    async cmy(imagePath, c, m, y) {
+        let { imageBox, height, width } = await this.createImageBox(imagePath);
         let result = []
-        for(let i=0; i<height; i++){
+        for (let i = 0; i < height; i++) {
             let line = [];
-            for(let j=0; j<width; j++){
+            for (let j = 0; j < width; j++) {
                 let pixel = { r: 0, g: 0, b: 0 };
                 pixel.r = imageBox[i][j].r * (1 - c);
                 pixel.g = imageBox[i][j].g * (1 - m);
@@ -974,7 +1048,7 @@ class images {
         const res = await this.saveImageBox(imagePath, result);
         return res;
     }
-    async createImageBox(imagePath){
+    async createImageBox(imagePath) {
         try {
             const image = await Jimp.read(path.resolve('uploads', imagePath));
             let height = image.bitmap.height; let width = image.bitmap.width;
@@ -1322,6 +1396,44 @@ class images {
             console.log(err);
             return false;
         }
+    }
+    async colorequalization(imagePath) {
+        const image = await Jimp.read(path.resolve('uploads', imagePath));
+        const fileName = "equalized_picture.jpg";
+        const width = image.bitmap.width;
+        const height = image.bitmap.height;
+
+        const hsiArray = [];
+        const intensityArray = [];
+
+        image.scan(0, 0, width, height, (x, y, idx) => {
+            const r = image.bitmap.data[idx];
+            const g = image.bitmap.data[idx + 1];
+            const b = image.bitmap.data[idx + 2];
+
+            const [h, s, i] = rgbToHsi(r, g, b);
+            hsiArray.push([h, s, i]);
+            intensityArray.push(i);
+        });
+
+        const equalizedIntensityArray = equalizeHistogram(intensityArray);
+
+        let i = 0;
+        image.scan(0, 0, width, height, (x, y, idx) => {
+            const [h, s] = hsiArray[i];
+            const equalizedI = equalizedIntensityArray[i];
+
+            const [r, g, b] = hsiToRgb(h, s, equalizedI);
+
+            image.bitmap.data[idx] = r;
+            image.bitmap.data[idx + 1] = g;
+            image.bitmap.data[idx + 2] = b;
+
+            i++;
+        });
+        await image.writeAsync(`uploads/${fileName}`, (err) => {
+            if (err) throw err;
+        });
     }
 }
 module.exports = new images
