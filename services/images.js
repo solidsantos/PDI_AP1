@@ -306,7 +306,6 @@ class images {
             return false;
         }
     }
-
     async histogramGraph(imagePath) {
         try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
@@ -583,7 +582,7 @@ class images {
         }
 
     }
-    async toGrayWeighted(imagePath) {
+    async toGrayWeighted(imagePath){
         try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             if (!this.convertIntoGray(imageBox, height, width)) return false;
@@ -594,7 +593,7 @@ class images {
             return false;
         }
     }
-    getTypicalMask(n, center) {
+    getTypicalMask(n, center){
         let mask = [];
         for (let i = 0; i < n; i++) {
             mask[i] = new Array(n).fill(0);
@@ -615,7 +614,7 @@ class images {
         }
         return mask;
     }
-    async adjustHSI(imagePath, hCoef, sCoef, iCoef) {
+    async adjustHSI(imagePath, hCoef, sCoef, iCoef){
         try {
             let { imageBox, height, width } = await this.createImageBoxHSI(imagePath);
             for (let i = 0; i < height; i++) {
@@ -632,7 +631,7 @@ class images {
             return false;
         }
     }
-    async chroma(imagePath, imagePathBG, { r, g, b }, range) {
+    async chroma(imagePath, imagePathBG, { r, g, b }, range){
         try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             let result = await this.createImageBox(imagePathBG);
@@ -750,7 +749,7 @@ class images {
             return result;
         }
     }
-    async spin(imagePath, angle) {
+    async spin(imagePath, angle){
         try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             let zRad = angle * (Math.PI) / 180;
@@ -799,7 +798,7 @@ class images {
             return false;
         }
     }
-    async spinIL(imagePath, angle) {
+    async spinIL(imagePath, angle){
         try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             let zRad = angle * (Math.PI) / 180;
@@ -860,7 +859,7 @@ class images {
             return false;
         }
     }
-    async scale(imagePath, scale) {
+    async scale(imagePath, scale){
         try {
             let { imageBox, height, width } = await this.createImageBox(imagePath);
             console.log(scale);
@@ -958,7 +957,24 @@ class images {
             return false;
         }
     }
-    async createImageBox(imagePath) {
+    async cmy(imagePath, c, m, y){
+        let {imageBox, height, width} = await this.createImageBox(imagePath);
+        let result = []
+        for(let i=0; i<height; i++){
+            let line = [];
+            for(let j=0; j<width; j++){
+                let pixel = { r: 0, g: 0, b: 0 };
+                pixel.r = imageBox[i][j].r * (1 - c);
+                pixel.g = imageBox[i][j].g * (1 - m);
+                pixel.b = imageBox[i][j].b * (1 - y);
+                line.push(pixel);
+            }
+            result.push(line);
+        }
+        const res = await this.saveImageBox(imagePath, result);
+        return res;
+    }
+    async createImageBox(imagePath){
         try {
             const image = await Jimp.read(path.resolve('uploads', imagePath));
             let height = image.bitmap.height; let width = image.bitmap.width;

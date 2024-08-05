@@ -978,3 +978,35 @@ histogramButton.addEventListener('click', async () => {
         console.log(err);
     }
 });
+
+
+/// Ajuste cmy
+
+const cmyInput = document.getElementsByClassName('CMY-input');
+const cmyBtn = document.getElementById('CMY-btn');
+
+cmyBtn.addEventListener('click', async()=>{
+    let c = parseFloat(cmyInput[0].value);
+    let m = parseFloat(cmyInput[1].value);
+    let y = parseFloat(cmyInput[2].value);
+    const body = JSON.stringify({
+        title: imageName,
+        c, m, y
+    })
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try{
+        const res = await fetch('http://localhost:8080/cmy', fetchOptions);
+        if(res.status == 200){
+            const body = await res.json();
+            alterateImage(body.msg);
+        }
+    }catch(err){
+        console.log(err);
+    }
+})

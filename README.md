@@ -76,7 +76,7 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 4. **Ajuste de Matiz, Saturação e Brilho** ✅
    - Controle de intensidade HSI
 
-5. **Ajuste de Canal** ❌
+5. **Ajuste de Canal** ✅
    - Ajustar C/R, M/G e Y/B
 
 6. **Sépia** ✅

@@ -32,6 +32,7 @@ router.post('/spin', imgC.spin);
 router.post('/spinIL', imgC.spinIL);
 router.post('/scale', imgC.scale);
 router.post('/scaleIL', imgC.scaleIL);
+router.post('/cmy', imgC.cmy)
 
 router.post('/encode', imgC.encode);
 router.post('/decode', imgC.decode);
