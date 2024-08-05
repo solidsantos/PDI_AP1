@@ -1009,4 +1009,26 @@ cmyBtn.addEventListener('click', async()=>{
     }catch(err){
         console.log(err);
     }
-})
+});
+
+const eqcolor = document.getElementById('btn-eqcolor');
+eqcolor.addEventListener('click', async () => {
+    const body = JSON.stringify({
+        title: imageName,
+    });
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try {
+        const res = await fetch('http://localhost:8080/colorequalization', fetchOptions);
+        if (res.status == 200) {
+            const body = await res.json();
+        }
+    } catch (err) {
+        console.log(err);
+    }
+});
