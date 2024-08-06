@@ -21,7 +21,7 @@ Desenvolver um programa processador de imagens com interface gráfica. O program
 [Parte 2]:
 
 - Exibição do histograma ✅
-- Equalização de histograma ❌
+- Equalização de histograma ✅
 
 [Parte 3]:
 
