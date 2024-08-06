@@ -390,20 +390,33 @@ class images {
                 green: Array(256).fill(0),
                 blue: Array(256).fill(0)
             };
-            console.log(imageBox[0][0].r);
+
+            console.log(imageBox[0][0].r); // Verifique se as cores estão sendo acessadas corretamente
+
             for (let i = 0; i < height; i++) {
                 for (let j = 0; j < width; j++) {
-                    histogram.red[imageBox[i][j].r]++;
-                    histogram.green[imageBox[i][j].g]++;
-                    histogram.blue[imageBox[i][j].b]++;
+                    let r = imageBox[i][j].r;
+                    let g = imageBox[i][j].g;
+                    let b = imageBox[i][j].b;
+
+                    // Verifique se os valores estão dentro do intervalo esperado
+                    if (r >= 0 && r < 256) histogram.red[r]++;
+                    if (g >= 0 && g < 256) histogram.green[g]++;
+                    if (b >= 0 && b < 256) histogram.blue[b]++;
                 }
             }
+
             let totalPixels = width * height;
-            for (let i = 0; i < 256; i++) {
-                histogram.red[i] /= totalPixels;
-                histogram.green[i] /= totalPixels;
-                histogram.blue[i] /= totalPixels;
+
+            // Certifique-se de que totalPixels é maior que 0 antes da divisão
+            if (totalPixels > 0) {
+                for (let i = 0; i < 256; i++) {
+                    histogram.red[i] /= totalPixels;
+                    histogram.green[i] /= totalPixels;
+                    histogram.blue[i] /= totalPixels;
+                }
             }
+
             return histogram;
         } catch (err) {
             console.log(err);

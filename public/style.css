@@ -1,35 +1,49 @@
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
 
-body{
+body {
     background-color: rgb(44, 44, 44);
     font-family: "Titillium Web", sans-serif;
     padding: 0;
     margin: 0;
     border: 0;
 }
-#main{
+
+#main {
     display: flex;
     flex-direction: row;
     height: 100%;
 }
-#sidebar{
+
+#sidebar {
     color: white;
     padding: .8rem;
     background-color: rgb(36, 36, 36);
     max-width: 20%;
     height: 100%;
 }
-#buttons{
+
+#buttons {
     display: flex;
     flex-direction: column;
 }
-label{
+
+label {
     font-size: 10px;
 }
-#image-aplication{
+
+#image-aplication {
     max-width: 100%;
     max-height: 100%;
 }
-.sub-div{
+
+.sub-div {
     max-width: 100%;
+}
+
+#histogram {
+    margin-left: 20px;
+    display: block;
+    box-sizing: border-box;
+    height: 300px;
+    width: 600px;
 }

@@ -273,7 +273,8 @@ const histBtn = document.getElementById('histogram-btn');
 histBtn.addEventListener('click', async () => {
     const body = JSON.stringify({
         title: imageName
-    })
+    });
+    
     const fetchOptions = {
         method: 'POST',
         body: body,
@@ -281,12 +282,14 @@ histBtn.addEventListener('click', async () => {
             'Content-Type': 'application/json'
         }
     };
+    
     try {
         const res = await fetch('http://localhost:8080/histogramGraph', fetchOptions);
-        if (res.status == 200) {
-            const body = await res.json();
-            console.log(body);
-            let histogram = body.msg;
+        if (res.status === 200) {
+            const responseBody = await res.json();
+            console.log(responseBody);
+            
+            let histogram = responseBody.msg;
             var histogramaData = {
                 labels: Array.from({ length: 256 }, (_, i) => i),
                 datasets: [
@@ -325,18 +328,25 @@ histBtn.addEventListener('click', async () => {
                     }
                 }
             };
+            
             var ctx = document.getElementById('histogram').getContext('2d');
-
-            var histogramaChart = new Chart(ctx, {
-                type: 'bar',
-                data: histogramaData,
-                options: histogramaOptions
-            });
+            if (ctx) {
+                var histogramaChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: histogramaData,
+                    options: histogramaOptions
+                });
+            } else {
+                console.error('Elemento canvas com id "histogram" não encontrado.');
+            }
+        } else {
+            console.error('Erro na requisição: ', res.status);
         }
     } catch (err) {
-        console.log(err);
+        console.error('Erro na chamada fetch: ', err);
     }
-})
+});
+
 
 
 /// Linearização (binarização)
