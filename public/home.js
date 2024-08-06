@@ -1032,3 +1032,25 @@ eqcolor.addEventListener('click', async () => {
         console.log(err);
     }
 });
+
+const eqgray = document.getElementById('btn-eqgray');
+eqgray.addEventListener('click', async () => {
+    const body = JSON.stringify({
+        title: imageName,
+    });
+    const fetchOptions = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try {
+        const res = await fetch('http://localhost:8080/grayequalization', fetchOptions);
+        if (res.status == 200) {
+            const body = await res.json();
+        }
+    } catch (err) {
+        console.log(err);
+    }
+});

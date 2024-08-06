@@ -1398,42 +1398,103 @@ class images {
         }
     }
     async colorequalization(imagePath) {
-        const image = await Jimp.read(path.resolve('uploads', imagePath));
-        const fileName = "equalized_picture.jpg";
-        const width = image.bitmap.width;
-        const height = image.bitmap.height;
+        try {
+            const image = await Jimp.read(path.resolve('uploads', imagePath));
+            const fileName = "equalized_picture.jpg";
+            const width = image.bitmap.width;
+            const height = image.bitmap.height;
 
-        const hsiArray = [];
-        const intensityArray = [];
+            const hsiArray = [];
+            const intensityArray = [];
 
-        image.scan(0, 0, width, height, (x, y, idx) => {
-            const r = image.bitmap.data[idx];
-            const g = image.bitmap.data[idx + 1];
-            const b = image.bitmap.data[idx + 2];
+            image.scan(0, 0, width, height, (x, y, idx) => {
+                const r = image.bitmap.data[idx];
+                const g = image.bitmap.data[idx + 1];
+                const b = image.bitmap.data[idx + 2];
 
-            const [h, s, i] = rgbToHsi(r, g, b);
-            hsiArray.push([h, s, i]);
-            intensityArray.push(i);
-        });
+                const [h, s, i] = rgbToHsi(r, g, b);
+                hsiArray.push([h, s, i]);
+                intensityArray.push(i);
+            });
 
-        const equalizedIntensityArray = equalizeHistogram(intensityArray);
+            const equalizedIntensityArray = equalizeHistogram(intensityArray);
 
-        let i = 0;
-        image.scan(0, 0, width, height, (x, y, idx) => {
-            const [h, s] = hsiArray[i];
-            const equalizedI = equalizedIntensityArray[i];
+            let i = 0;
+            image.scan(0, 0, width, height, (x, y, idx) => {
+                const [h, s] = hsiArray[i];
+                const equalizedI = equalizedIntensityArray[i];
 
-            const [r, g, b] = hsiToRgb(h, s, equalizedI);
+                const [r, g, b] = hsiToRgb(h, s, equalizedI);
 
-            image.bitmap.data[idx] = r;
-            image.bitmap.data[idx + 1] = g;
-            image.bitmap.data[idx + 2] = b;
+                image.bitmap.data[idx] = r;
+                image.bitmap.data[idx + 1] = g;
+                image.bitmap.data[idx + 2] = b;
 
-            i++;
-        });
-        await image.writeAsync(`uploads/${fileName}`, (err) => {
-            if (err) throw err;
-        });
+                i++;
+            });
+            await image.writeAsync(`uploads/${fileName}`, (err) => {
+                if (err) throw err;
+            });
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+    }
+    async grayequalization(imagePath) {
+        try {
+            const image = await Jimp.read(path.resolve('uploads', imagePath));
+            const fileName = "equalizedgrayscale_picture.jpg";
+            const width = image.bitmap.width;
+            const height = image.bitmap.height;
+            const totalPixels = width * height;
+
+            // Helper function to compute histogram and equalize a channel
+            const equalizeChannel = (channelData) => {
+                const histogram = new Array(256).fill(0);
+                channelData.forEach(value => histogram[value]++);
+
+                const cdf = new Array(256).fill(0);
+                cdf[0] = histogram[0];
+                for (let i = 1; i < 256; i++) {
+                    cdf[i] = cdf[i - 1] + histogram[i];
+                }
+
+                const cdfMin = cdf.find(value => value !== 0);
+                const scaleFactor = 255 / (totalPixels - cdfMin);
+
+                return channelData.map(value => Math.round((cdf[value] - cdfMin) * scaleFactor));
+            };
+
+            // Extract RGB channels
+            const redChannel = [];
+            const greenChannel = [];
+            const blueChannel = [];
+            image.scan(0, 0, width, height, (x, y, idx) => {
+                redChannel.push(image.bitmap.data[idx]);
+                greenChannel.push(image.bitmap.data[idx + 1]);
+                blueChannel.push(image.bitmap.data[idx + 2]);
+            });
+
+            // Equalize each channel
+            const equalizedRed = equalizeChannel(redChannel);
+            const equalizedGreen = equalizeChannel(greenChannel);
+            const equalizedBlue = equalizeChannel(blueChannel);
+
+            // Update image with equalized channels
+            let i = 0;
+            image.scan(0, 0, width, height, (x, y, idx) => {
+                image.bitmap.data[idx] = equalizedRed[i];
+                image.bitmap.data[idx + 1] = equalizedGreen[i];
+                image.bitmap.data[idx + 2] = equalizedBlue[i];
+                i++;
+            });
+            await image.writeAsync(`uploads/${fileName}`, (err) => {
+                if (err) throw err;
+            });
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
     }
 }
 module.exports = new images

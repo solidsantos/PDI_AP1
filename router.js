@@ -39,5 +39,6 @@ router.post('/decode', imgC.decode);
 
 router.post('/generatehistogram', imgC.generateHistogram)
 router.post('/colorequalization', imgC.colorequalization)
+router.post('/grayequalization', imgC.grayequalization)
 
 module.exports = router;
